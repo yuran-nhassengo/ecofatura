@@ -1,30 +1,13 @@
 "use client";
 
+import { Factura } from "@/app/types/Factura";
 import React, { useState, useRef, useEffect } from "react";
 import { FaTrash, FaInfoCircle } from "react-icons/fa";
 
 const IVA_FIXED = 23;
-interface Factura {
-  codigo: string;
-  nome: string;
-  tipo: string;
-  data: string;
-  entidade: string;
-  valor: string;
-  descricao: string;
-  nuit: number | "";
-}
 
-interface FormState {
-  codigo: string;
-  nome: string;
-  tipo: string;
-  data: string;
-  entidade: string;
-  valor: string;
-  descricao: string;
-  nuit: number | "";
-}
+
+
 
 export const Facturas: React.FC = () => {
   const [facturas, setFacturas] = useState<Factura[]>([
@@ -80,7 +63,7 @@ export const Facturas: React.FC = () => {
     },
   ]);
 
-  const [form, setForm] = useState<FormState>({
+  const [form, setForm] = useState<Factura>({
     codigo: "",
     nome: "",
     tipo: "",
