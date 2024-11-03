@@ -6,5 +6,5 @@ export interface Factura {
     entidade: string;
     valor: string;
     descricao: string;
-    nuit: number | "";
+    nuit: number ;
   }

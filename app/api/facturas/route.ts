@@ -18,6 +18,7 @@ export async function POST(request: Request) {
         const newFactura = await createFactura(codigo, nome, tipo, data, entidade, valor, descricao, nuit);
         return NextResponse.json(newFactura, { status: 201 });
     } catch (error) {
+        console.log(error)
         return NextResponse.json({ error: 'erro' }, { status: 500 });
     }
 }

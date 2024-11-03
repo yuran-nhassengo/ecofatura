@@ -58,18 +58,26 @@ export const Facturas: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+
+    const updatedValue = name === 'nuit' ? parseInt(value, 10) : value;
+
+    setForm({ ...form, [name]: updatedValue  });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const formData = {
+      ...form,
+    };
+
     if (selectedFacturaIndex !== null) {
       const response = await fetch(`/api/facturas/${facturas[selectedFacturaIndex].codigo}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify(formData),
       });
       const updatedFactura = await response.json();
       const updatedFacturas = [...facturas];
@@ -83,7 +91,7 @@ export const Facturas: React.FC = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify(formData),
       });
       const newFactura = await response.json();
       setFacturas([...facturas, newFactura]);
@@ -246,7 +254,7 @@ export const Facturas: React.FC = () => {
             entidade: "",
             valor: "",
             descricao: "",
-            nuit: "",
+            nuit: 0,
           });
           setSelectedFacturaIndex(null);
           document.getElementById("form-section")!.style.display = "block";
@@ -322,7 +330,7 @@ export const Facturas: React.FC = () => {
           </div>
           <div className="flex justify-between">
             <div>{form.nome.length}/10 caracteres</div>
-            <div>{form.nuit.length} Dígitos</div>
+            <div>{form.nuit} Dígitos</div>
           </div>
           <input
             type="text"
