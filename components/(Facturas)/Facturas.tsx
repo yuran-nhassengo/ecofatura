@@ -120,28 +120,28 @@ export const Facturas: React.FC = () => {
   };
 
   const sortedFacturas = React.useMemo(() => {
-    let sortableItems = [...facturas];
-    if (sortConfig.key) {
-      sortableItems.sort((a, b) => {
-        if (sortConfig.key === "valor") {
-          return sortConfig.direction === "ascending"
-            ? parseFloat(a[sortConfig.key]) - parseFloat(b[sortConfig.key])
-            : parseFloat(b[sortConfig.key]) - parseFloat(a[sortConfig.key]);
-        } else if (sortConfig.key === "data") {
-          return sortConfig.direction === "ascending"
-            ? new Date(a[sortConfig.key]).getTime() -
-                new Date(b[sortConfig.key]).getTime()
-            : new Date(b[sortConfig.key]).getTime() -
-                new Date(a[sortConfig.key]).getTime();
-        } else {
-          return sortConfig.direction === "ascending"
-            ? a[sortConfig.key].localeCompare(b[sortConfig.key])
-            : b[sortConfig.key].localeCompare(a[sortConfig.key]);
-        }
-      });
-    }
-    return sortableItems;
-  }, [facturas, sortConfig]);
+  let sortableItems = Array.isArray(facturas) ? [...facturas] : [];
+  if (sortConfig.key) {
+    sortableItems.sort((a, b) => {
+      if (sortConfig.key === "valor") {
+        return sortConfig.direction === "ascending"
+          ? parseFloat(a[sortConfig.key]) - parseFloat(b[sortConfig.key])
+          : parseFloat(b[sortConfig.key]) - parseFloat(a[sortConfig.key]);
+      } else if (sortConfig.key === "data") {
+        return sortConfig.direction === "ascending"
+          ? new Date(a[sortConfig.key]).getTime() -
+              new Date(b[sortConfig.key]).getTime()
+          : new Date(b[sortConfig.key]).getTime() -
+              new Date(a[sortConfig.key]).getTime();
+      } else {
+        return sortConfig.direction === "ascending"
+          ? a[sortConfig.key].localeCompare(b[sortConfig.key])
+          : b[sortConfig.key].localeCompare(a[sortConfig.key]);
+      }
+    });
+  }
+  return sortableItems;
+}, [facturas, sortConfig]);
 
   const handleEdit = (index: number) => {
     setForm(facturas[index]);
