@@ -2,11 +2,6 @@ import { createFactura, deleteFactura, getAllFacturas, updateFactura } from "@/a
 import { NextResponse } from "next/server";
 
 
-
-
-
-
-
 export async function GET(request: Request) {
     try {
         const facturas = await getAllFacturas();

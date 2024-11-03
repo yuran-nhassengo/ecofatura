@@ -10,58 +10,7 @@ const IVA_FIXED = 23;
 
 
 export const Facturas: React.FC = () => {
-  const [facturas, setFacturas] = useState<Factura[]>([
-    {
-      codigo: "001",
-      nome: "moçambola",
-      tipo: "Fatura",
-      data: "2024-01-15",
-      entidade: "Empresa A",
-      valor: "150.00",
-      descricao: "texto aleatorio 1",
-      nuit: 1234567890,
-    },
-    {
-      codigo: "002",
-      nome: "coca-cola",
-      tipo: "Cotação",
-      data: "2024-02-20",
-      entidade: "Empresa B",
-      valor: "200.00",
-      descricao: "texto aleatorio 2",
-      nuit: 5234555890,
-    },
-    {
-      codigo: "003",
-      nome: "aga khan",
-      tipo: "Fatura",
-      data: "2024-03-05",
-      entidade: "Empresa C",
-      valor: "75.50",
-      descricao: "texto aleatorio 3",
-      nuit: 3634567890,
-    },
-    {
-      codigo: "004",
-      nome: "estado",
-      tipo: "Cotação",
-      data: "2024-04-10",
-      entidade: "Empresa D",
-      valor: "300.00",
-      descricao: "texto aleatorio 4",
-      nuit: 9034567890,
-    },
-    {
-      codigo: "005",
-      nome: " iabil",
-      tipo: "Fatura",
-      data: "2024-05-25",
-      entidade: "Empresa E",
-      valor: "120.75",
-      descricao: "texto aleatorio 5",
-      nuit: 4234567890,
-    },
-  ]);
+  const [facturas, setFacturas] = useState<Factura[]>([]);
 
   const [form, setForm] = useState<Factura>({
     codigo: "",
@@ -94,6 +43,17 @@ export const Facturas: React.FC = () => {
   const detailModalRef = useRef<HTMLDivElement | null>(null);
   const deleteModalRef = useRef<HTMLDivElement | null>(null);
 
+  useEffect(() => {
+    const fetchFacturas = async () => {
+      const response = await fetch("/api/facturas");
+      const data = await response.json();
+      setFacturas(data);
+    };
+
+    fetchFacturas();
+  }, []);
+
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -101,15 +61,33 @@ export const Facturas: React.FC = () => {
     setForm({ ...form, [name]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (selectedFacturaIndex !== null) {
+      const response = await fetch(`/api/facturas/${facturas[selectedFacturaIndex].codigo}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+      const updatedFactura = await response.json();
       const updatedFacturas = [...facturas];
-      updatedFacturas[selectedFacturaIndex] = { ...form };
+      updatedFacturas[selectedFacturaIndex] = updatedFactura;
       setFacturas(updatedFacturas);
       setSelectedFacturaIndex(null);
     } else {
-      setFacturas([...facturas, form]);
+
+      const response = await fetch("/api/facturas", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+      const newFactura = await response.json();
+      setFacturas([...facturas, newFactura]);
+
     }
 
     setForm({
