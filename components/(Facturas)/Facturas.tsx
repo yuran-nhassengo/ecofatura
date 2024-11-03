@@ -3,81 +3,126 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FaTrash, FaInfoCircle } from "react-icons/fa";
 
-export const Facturas = () => {
-  const [facturas, setFacturas] = useState([
+const IVA_FIXED = 23;
+interface Factura {
+  codigo: string;
+  nome: string;
+  tipo: string;
+  data: string;
+  entidade: string;
+  valor: string;
+  descricao: string;
+  nuit: number | "";
+}
+
+interface FormState {
+  codigo: string;
+  nome: string;
+  tipo: string;
+  data: string;
+  entidade: string;
+  valor: string;
+  descricao: string;
+  nuit: number | "";
+}
+
+export const Facturas: React.FC = () => {
+  const [facturas, setFacturas] = useState<Factura[]>([
     {
-      nome: "Fatura 1",
-      tipo: "Serviço",
+      codigo: "001",
+      nome: "moçambola",
+      tipo: "Fatura",
       data: "2024-01-15",
       entidade: "Empresa A",
       valor: "150.00",
-      iva: "23",
+      descricao: "texto aleatorio 1",
+      nuit: 1234567890,
     },
     {
-      nome: "Fatura 2",
-      tipo: "Produto",
+      codigo: "002",
+      nome: "coca-cola",
+      tipo: "Cotação",
       data: "2024-02-20",
       entidade: "Empresa B",
       valor: "200.00",
-      iva: "23",
+      descricao: "texto aleatorio 2",
+      nuit: 5234555890,
     },
     {
-      nome: "Fatura 3",
-      tipo: "Serviço",
+      codigo: "003",
+      nome: "aga khan",
+      tipo: "Fatura",
       data: "2024-03-05",
       entidade: "Empresa C",
       valor: "75.50",
-      iva: "23",
+      descricao: "texto aleatorio 3",
+      nuit: 3634567890,
     },
     {
-      nome: "Fatura 4",
-      tipo: "Produto",
+      codigo: "004",
+      nome: "estado",
+      tipo: "Cotação",
       data: "2024-04-10",
       entidade: "Empresa D",
       valor: "300.00",
-      iva: "23",
+      descricao: "texto aleatorio 4",
+      nuit: 9034567890,
     },
     {
-      nome: "Fatura 5",
-      tipo: "Serviço",
+      codigo: "005",
+      nome: " iabil",
+      tipo: "Fatura",
       data: "2024-05-25",
       entidade: "Empresa E",
       valor: "120.75",
-      iva: "23",
+      descricao: "texto aleatorio 5",
+      nuit: 4234567890,
     },
   ]);
-  const [form, setForm] = useState({
+
+  const [form, setForm] = useState<FormState>({
+    codigo: "",
     nome: "",
     tipo: "",
     data: "",
     entidade: "",
     valor: "",
-    iva: "",
+    descricao: "",
+    nuit: 0,
   });
-  const [sortConfig, setSortConfig] = useState({
+
+  const [sortConfig, setSortConfig] = useState<{
+    key: string;
+    direction: "ascending" | "descending";
+  }>({
     key: "",
     direction: "ascending",
   });
-  const [selectedFacturaIndex, setSelectedFacturaIndex] = useState(null);
-  const [selectedFactura, setSelectedFactura] = useState(null);
-  const [showDetailCard, setShowDetailCard] = useState(false);
-  const [selectedIndices, setSelectedIndices] = useState([]);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [deleteIndex, setDeleteIndex] = useState(null);
 
-  const detailModalRef = useRef();
-  const deleteModalRef = useRef();
+  const [selectedFacturaIndex, setSelectedFacturaIndex] = useState<
+    number | null
+  >(null);
+  const [selectedFactura, setSelectedFactura] = useState<Factura | null>(null);
+  const [showDetailCard, setShowDetailCard] = useState<boolean>(false);
+  const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+  const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
 
-  const handleChange = (e) => {
+  const detailModalRef = useRef<HTMLDivElement | null>(null);
+  const deleteModalRef = useRef<HTMLDivElement | null>(null);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (selectedFacturaIndex !== null) {
       const updatedFacturas = [...facturas];
-      updatedFacturas[selectedFacturaIndex] = form;
+      updatedFacturas[selectedFacturaIndex] = { ...form };
       setFacturas(updatedFacturas);
       setSelectedFacturaIndex(null);
     } else {
@@ -85,18 +130,20 @@ export const Facturas = () => {
     }
 
     setForm({
+      codigo: "",
       nome: "",
       tipo: "",
       data: "",
       entidade: "",
       valor: "",
-      iva: "",
+      descricao: "",
+      nuit: 0,
     });
-    document.getElementById("form-section").style.display = "none";
+    document.getElementById("form-section")!.style.display = "none";
   };
 
-  const requestSort = (key) => {
-    let direction = "ascending";
+  const requestSort = (key: string) => {
+    let direction: "ascending" | "descending" = "ascending";
     if (sortConfig.key === key && sortConfig.direction === "ascending") {
       direction = "descending";
     }
@@ -113,8 +160,10 @@ export const Facturas = () => {
             : parseFloat(b[sortConfig.key]) - parseFloat(a[sortConfig.key]);
         } else if (sortConfig.key === "data") {
           return sortConfig.direction === "ascending"
-            ? new Date(a[sortConfig.key]) - new Date(b[sortConfig.key])
-            : new Date(b[sortConfig.key]) - new Date(a[sortConfig.key]);
+            ? new Date(a[sortConfig.key]).getTime() -
+                new Date(b[sortConfig.key]).getTime()
+            : new Date(b[sortConfig.key]).getTime() -
+                new Date(a[sortConfig.key]).getTime();
         } else {
           return sortConfig.direction === "ascending"
             ? a[sortConfig.key].localeCompare(b[sortConfig.key])
@@ -125,20 +174,10 @@ export const Facturas = () => {
     return sortableItems;
   }, [facturas, sortConfig]);
 
-  const handleEdit = (index) => {
+  const handleEdit = (index: number) => {
     setForm(facturas[index]);
     setSelectedFacturaIndex(index);
-    document.getElementById("form-section").style.display = "block";
-  };
-
-  const handleSelect = (index) => {
-    setSelectedIndices((prev) => {
-      if (prev.includes(index)) {
-        return prev.filter((i) => i !== index);
-      } else {
-        return [...prev, index];
-      }
-    });
+    document.getElementById("form-section")!.style.display = "block";
   };
 
   const deleteSelected = () => {
@@ -156,7 +195,7 @@ export const Facturas = () => {
     setShowDeleteModal(false);
   };
 
-  const handleSingleDelete = (index) => {
+  const handleSingleDelete = (index: number) => {
     setDeleteIndex(index);
     setShowDeleteModal(true);
   };
@@ -174,7 +213,14 @@ export const Facturas = () => {
     setShowDeleteModal(false);
   };
 
-  const handleSelectAll = (e) => {
+  const handleSelect = (index: number) => {
+    const newSelectedIndices = selectedIndices.includes(index)
+      ? selectedIndices.filter((i) => i !== index)
+      : [...selectedIndices, index];
+    setSelectedIndices(newSelectedIndices);
+  };
+
+  const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
     const isChecked = e.target.checked;
     setSelectedIndices(isChecked ? facturas.map((_, index) => index) : []);
   };
@@ -187,16 +233,16 @@ export const Facturas = () => {
     setShowDeleteModal(false);
   };
 
-  const handleClickOutside = (event) => {
+  const handleClickOutside = (event: MouseEvent) => {
     if (
       detailModalRef.current &&
-      !detailModalRef.current.contains(event.target)
+      !detailModalRef.current.contains(event.target as Node)
     ) {
       closeDetailModal();
     }
     if (
       deleteModalRef.current &&
-      !deleteModalRef.current.contains(event.target)
+      !deleteModalRef.current.contains(event.target as Node)
     ) {
       closeDeleteModal();
     }
@@ -209,13 +255,22 @@ export const Facturas = () => {
     };
   }, []);
 
-  // Função para verificar se é dispositivo móvel Não apagar
+  const isMiniphone = () => {
+    return window.innerWidth <= 359;
+  };
   const isMobile = () => {
-    return window.innerWidth <= 768;
+    return window.innerWidth <= 780;
+  };
+  const isMin = () => {
+    return window.innerWidth <= 1170;
+  };
+
+  const calculateTotalWithIVA = (valor: string) => {
+    return (parseFloat(valor) * (1 + IVA_FIXED / 100)).toFixed(2);
   };
 
   return (
-    <div className="max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl mx-auto m-6 p-6 rounded-lg shadow-lg">
+    <div className="max-w-2xl md:max-w-4xl lg:max-w-6xl 2xl:max-w-7xl mx-auto m-6 p-6 rounded-lg shadow-lg ">
       <h1 className="text-3xl font-semibold text-center mb-4">
         Gerenciamento de Faturas
       </h1>
@@ -223,15 +278,17 @@ export const Facturas = () => {
         className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-300 mb-4"
         onClick={() => {
           setForm({
+            codigo: "",
             nome: "",
             tipo: "",
             data: "",
             entidade: "",
             valor: "",
-            iva: "",
+            descricao: "",
+            nuit: "",
           });
           setSelectedFacturaIndex(null);
-          document.getElementById("form-section").style.display = "block";
+          document.getElementById("form-section")!.style.display = "block";
         }}
       >
         Criar Nova Fatura
@@ -248,32 +305,64 @@ export const Facturas = () => {
 
       <div id="form-section" className="form-section hidden mb-4">
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="flex  justify-between">
+            <select
+              name="tipo"
+              value={form.tipo}
+              onChange={handleChange}
+              required
+              className="w-full p-3 mr-1 dark:bg-black border rounded-md"
+            >
+              <option value="" disabled className="">
+                Fatura/Cotação
+              </option>
+              <option value="Fatura">Fatura</option>
+              <option value="Cotação">Cotação</option>
+            </select>
+            <input
+              type="date"
+              name="data"
+              value={form.data}
+              onChange={handleChange}
+              required
+              className="w-full p-3 ml-1 dark:bg-black hover:bg-white/50 border rounded-md"
+            />
+          </div>
           <input
             type="text"
-            name="nome"
-            placeholder="Nome"
-            value={form.nome}
+            name="codigo"
+            placeholder="Código da Fatura"
+            value={form.codigo}
             onChange={handleChange}
             required
             className="w-full p-3 dark:bg-black border rounded-md"
           />
-          <input
-            type="text"
-            name="tipo"
-            placeholder="Tipo"
-            value={form.tipo}
-            onChange={handleChange}
-            required
-            className="w-full p-3 dark:bg-black border rounded-md"
-          />
-          <input
-            type="date"
-            name="data"
-            value={form.data}
-            onChange={handleChange}
-            required
-            className="w-full p-3 dark:bg-black hover:bg-white/50 border rounded-md"
-          />
+          <div className="flex justify-between">
+            <input
+              type="text"
+              name="nome"
+              placeholder="Nome"
+              value={form.nome}
+              onChange={handleChange}
+              required
+              maxLength={10}
+              className="w-full p-3 mr-1 dark:bg-black border rounded-md"
+            />
+
+            <input
+              type="number"
+              name="nuit"
+              placeholder="Digite o seu Nuit"
+              value={form.nuit}
+              onChange={handleChange}
+              required
+              className="w-full p-3 ml-1 dark:bg-black border rounded-md"
+            />
+          </div>
+          <div className="flex justify-between">
+            <div>{form.nome.length}/10 caracteres</div>
+            <div>{form.nuit.length} Dígitos</div>
+          </div>
           <input
             type="text"
             name="entidade"
@@ -292,23 +381,47 @@ export const Facturas = () => {
             required
             className="w-full p-3 dark:bg-black border rounded-md"
           />
+
           <input
-            type="number"
-            name="iva"
-            placeholder="IVA (%)"
-            value={form.iva}
+            name="descricao"
+            placeholder="Descrição"
+            value={form.descricao}
             onChange={handleChange}
             required
+            maxLength={50}
             className="w-full p-3 dark:bg-black border rounded-md"
           />
-          <button
-            type="submit"
-            className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition duration-300"
-          >
-            {selectedFacturaIndex !== null
-              ? "Atualizar Fatura"
-              : "Adicionar Fatura"}
-          </button>
+          <div className="text-right ">
+            {form.descricao.length}/50 caracteres
+          </div>
+
+          <div className="flex justify-between">
+            <button
+              type="submit"
+              className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition duration-300"
+            >
+              {selectedFacturaIndex !== null ? "Atualizar" : "Adicionar"}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setForm({
+                  codigo: "",
+                  nome: "",
+                  tipo: "",
+                  data: "",
+                  entidade: "",
+                  valor: "",
+                  descricao: "",
+                  nuit: 0,
+                });
+                document.getElementById("form-section")!.style.display = "none";
+              }}
+              className="ml-2 w-full bg-gray-600 text-white py-2 rounded hover:bg-gray-700 transition duration-300"
+            >
+              Cancelar
+            </button>
+          </div>
         </form>
       </div>
 
@@ -316,52 +429,79 @@ export const Facturas = () => {
         <table className="min-w-full mt-6 border-collapse">
           <thead>
             <tr>
-              <th className="p-3 border-b lg:border">
-                <input
-                  type="checkbox"
-                  onChange={handleSelectAll}
-                  checked={selectedIndices.length === facturas.length}
-                  className="cursor-pointer"
-                  style={{ transform: "scale(1.5)" }}
-                />
-              </th>
+              {!isMobile() && (
+                <th className="p-3 border-b 2xl:border">
+                  <input
+                    type="checkbox"
+                    onChange={handleSelectAll}
+                    checked={selectedIndices.length === facturas.length}
+                    className="cursor-pointer"
+                    style={{ transform: "scale(1.5)" }}
+                  />
+                </th>
+              )}
               <th
-                onClick={() => requestSort("nome")}
-                className="cursor-pointer p-3 border-b lg:border"
+                onClick={() => requestSort("codigo")}
+                className="cursor-pointer p-3 border-b 2xl:border"
               >
-                Nome
+                Código
               </th>
-              <th
-                onClick={() => requestSort("tipo")}
-                className="cursor-pointer p-3 border-b lg:border"
-              >
-                Tipo
-              </th>
-              <th
-                onClick={() => requestSort("data")}
-                className="cursor-pointer p-3 border-b lg:border"
-              >
-                Data
-              </th>
-              <th
-                onClick={() => requestSort("entidade")}
-                className="cursor-pointer p-3 border-b lg:border"
-              >
-                Entidade
-              </th>
+
+              {!isMobile() && (
+                <th
+                  onClick={() => requestSort("nome")}
+                  className="cursor-pointer p-3 border-b 2xl:border"
+                >
+                  Nome
+                </th>
+              )}
+              {!isMiniphone() && (
+                <th
+                  onClick={() => requestSort("data")}
+                  className="cursor-pointer p-3 border-b 2xl:border"
+                >
+                  Data
+                </th>
+              )}
+              {!isMobile() && (
+                <th
+                  onClick={() => requestSort("nuit")}
+                  className="cursor-pointer p-3 border-b 2xl:border"
+                >
+                  Nuit
+                </th>
+              )}
+              {!isMobile ||
+                (!isMin() && (
+                  <th
+                    onClick={() => requestSort("tipo")}
+                    className="cursor-pointer p-3 border-b 2xl:border"
+                  >
+                    Tipo
+                  </th>
+                ))}
+              {!isMobile ||
+                (!isMin() && (
+                  <th
+                    onClick={() => requestSort("entidade")}
+                    className="cursor-pointer p-3 border-b 2xl:border"
+                  >
+                    Entidade
+                  </th>
+                ))}
               <th
                 onClick={() => requestSort("valor")}
-                className="cursor-pointer p-3 border-b lg:border"
+                className="cursor-pointer p-3 border-b 2xl:border"
               >
                 Valor
               </th>
-              <th
-                onClick={() => requestSort("iva")}
-                className="cursor-pointer p-3 border-b lg:border"
-              >
-                IVA (%)
-              </th>
-              <th className="p-3 border-b lg:border">Ações</th>
+              {!isMobile() && (
+                <th className="p-3 border-b 2xl:border">
+                  Total com IVA (%{IVA_FIXED})
+                </th>
+              )}
+
+              <th className="p-3 border-b 2xl:border">Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -376,30 +516,50 @@ export const Facturas = () => {
                   }
                 }}
               >
-                <td className="p-3 border-b">
-                  <input
-                    type="checkbox"
-                    checked={selectedIndices.includes(index)}
-                    onChange={(e) => {
-                      e.stopPropagation();
-                      handleSelect(index);
-                    }}
-                    className="cursor-pointer"
-                    style={{ transform: "scale(1.5)" }}
-                  />
-                </td>
-                <td className="p-3 border-b">{factura.nome}</td>
-                <td className="p-3 border-b">{factura.tipo}</td>
-                <td className="p-3 border-b">{factura.data}</td>
-                <td className="p-3 border-b">{factura.entidade}</td>
-                <td className="p-3 border-b">{factura.valor}</td>
-                <td className="p-3 border-b">{factura.iva}</td>
+                {!isMobile() && (
+                  <td className="p-3 border-b">
+                    <input
+                      type="checkbox"
+                      checked={selectedIndices.includes(index)}
+                      onChange={(e) => {
+                        e.stopPropagation();
+                        handleSelect(index);
+                      }}
+                      className="cursor-pointer"
+                      style={{ transform: "scale(1.5)" }}
+                    />
+                  </td>
+                )}
+                <td className="p-3 border-b text-center">{factura.codigo}</td>
+                {!isMobile() && (
+                  <td className="p-3 border-b text-center">{factura.nome}</td>
+                )}
+                {!isMiniphone() && (
+                  <td className="p-3 border-b text-center">{factura.data}</td>
+                )}
+                {!isMobile() && (
+                  <td className="p-3 border-b text-center">{factura.nuit}</td>
+                )}
+                {!isMobile ||
+                  (!isMin() && (
+                    <td className="p-3 border-b text-center">{factura.tipo}</td>
+                  ))}
+                {!isMobile ||
+                  (!isMin() && (
+                    <td className="p-3 border-b text-center">
+                      {factura.entidade}
+                    </td>
+                  ))}
+                <td className="p-3 border-b text-center">{factura.valor}</td>
+                {!isMobile() && (
+                  <td className="p-3 border-b text-center">
+                    {calculateTotalWithIVA(factura.valor)}
+                  </td>
+                )}
                 <td className="p-3 inline-grid lg:block border-b">
-                 
-                  {/* Ícone de informação apenas para telas maiores Não apagar */}
                   {!isMobile() && (
                     <button
-                      className="bg-transparent text-blue-500 hover:text-blue-700 text-lg lg:mr-3 left-3 lg:left-0 lg:top-2 p-2  relative"
+                      className="bg-transparent text-blue-500 hover:text-blue-700 text-lg lg:mr-3 left-3 lg:left-0 lg:top-2 p-2 relative"
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedFactura(factura);
@@ -410,7 +570,7 @@ export const Facturas = () => {
                     </button>
                   )}
                   <button
-                    className="bg-yellow-500 text-white py-1 px-3 rounded mb-2 lg:mb-0 hover:bg-yellow-600"
+                    className="bg-yellow-500 text-white py-1 px-3 rounded mb-2 hover:bg-yellow-600"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleEdit(index);
@@ -434,7 +594,6 @@ export const Facturas = () => {
         </table>
       </div>
 
-      {/* Confirmação de exclusão Modal Não apagar */}
       {showDeleteModal && (
         <div
           className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-85"
@@ -470,32 +629,46 @@ export const Facturas = () => {
         </div>
       )}
 
-      {/* Detalhes dos Card Não apagar*/}
       {showDetailCard && selectedFactura && (
         <div
           className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-75"
           ref={detailModalRef}
         >
-          <div className="md:w-96 p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-semibold mb-4">Detalhes da Fatura</h2>
+          <div className=" md:w-96 p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg">
+            <h2 className="text-2xl font-semibold mb-4">
+              Detalhes da {selectedFactura.tipo}
+            </h2>
             <p>
-              <strong>Nome:</strong> {selectedFactura.nome}
+              <strong>Código:</strong> {selectedFactura.codigo}
             </p>
             <p>
-              <strong>Tipo:</strong> {selectedFactura.tipo}
+              <strong>Nome:</strong> {selectedFactura.nome}
             </p>
             <p>
               <strong>Data:</strong> {selectedFactura.data}
             </p>
             <p>
-              <strong>Entidade:</strong> {selectedFactura.entidade}
+              <strong>Nuit:</strong> {selectedFactura.nuit}
             </p>
             <p>
               <strong>Valor:</strong> {selectedFactura.valor}
             </p>
+            <hr className="my-4" />
             <p>
-              <strong>IVA (%):</strong> {selectedFactura.iva}
+              <strong>Tipo:</strong> {selectedFactura.tipo}
             </p>
+            <p>
+              <strong>Entidade:</strong> {selectedFactura.entidade}
+            </p>
+
+            <p>
+              <strong>Descrição:</strong> {selectedFactura.descricao}
+            </p>
+            <p>
+              <strong>Total com IVA:</strong>{" "}
+              {calculateTotalWithIVA(selectedFactura.valor)}
+            </p>
+
             <button
               className="mt-4 bg-gray-600 text-white py-2 px-4 rounded"
               onClick={closeDetailModal}
