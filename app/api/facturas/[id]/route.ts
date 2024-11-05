@@ -25,7 +25,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
     try {
-        const factura = await getFacturaById(params.id); // Acesso correto a 'params.id'
+        const factura = await getFacturaById(params.id); 
 
         if (!factura) {
             return NextResponse.json({ error: `Factura not found` }, { status: 404 });
