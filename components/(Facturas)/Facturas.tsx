@@ -120,30 +120,28 @@ export const Facturas: React.FC = () => {
   };
 
   const sortedFacturas = React.useMemo(() => {
-   
     const sortableItems = Array.isArray(facturas) ? [...facturas] : [];
   
     if (sortConfig.key) {
-     
-      const sorted = sortableItems.slice().sort((a: Record<string, any>, b: Record<string, any>) => {
-        if (sortConfig.key === "valor") {
+      sortableItems.sort((a: Factura, b: Factura) => {
+        const key = sortConfig.key as keyof Factura; // Define que o key é uma chave válida do tipo Factura
+  
+        if (key === "valor") {
           return sortConfig.direction === "ascending"
-            ? parseFloat(a[sortConfig.key]) - parseFloat(b[sortConfig.key])
-            : parseFloat(b[sortConfig.key]) - parseFloat(a[sortConfig.key]);
-        } else if (sortConfig.key === "data") {
+            ? parseFloat(a[key] as string) - parseFloat(b[key] as string)
+            : parseFloat(b[key] as string) - parseFloat(a[key] as string);
+        } else if (key === "data") {
           return sortConfig.direction === "ascending"
-            ? new Date(a[sortConfig.key]).getTime() -
-                new Date(b[sortConfig.key]).getTime()
-            : new Date(b[sortConfig.key]).getTime() -
-                new Date(a[sortConfig.key]).getTime();
+            ? new Date(a[key] as string | Date).getTime() -
+                new Date(b[key] as string | Date).getTime()
+            : new Date(b[key] as string | Date).getTime() -
+                new Date(a[key] as string | Date).getTime();
         } else {
           return sortConfig.direction === "ascending"
-            ? a[sortConfig.key].localeCompare(b[sortConfig.key])
-            : b[sortConfig.key].localeCompare(a[sortConfig.key]);
+            ? (a[key] as string).localeCompare(b[key] as string)
+            : (b[key] as string).localeCompare(a[key] as string);
         }
       });
-  
-      return sorted;
     }
   
     return sortableItems;
