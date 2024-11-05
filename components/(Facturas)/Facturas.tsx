@@ -120,7 +120,7 @@ export const Facturas: React.FC = () => {
   };
 
   const sortedFacturas = React.useMemo(() => {
-  let sortableItems = Array.isArray(facturas) ? [...facturas] : [];
+  const sortableItems = Array.isArray(facturas) ? [...facturas] : [];
   if (sortConfig.key) {
     sortableItems.sort((a, b) => {
       if (sortConfig.key === "valor") {
