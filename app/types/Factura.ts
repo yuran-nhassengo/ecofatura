@@ -1,4 +1,4 @@
-export interface Factura {
+export interface FacturaCreate {
     codigo: string;
     nome: string;
     tipo: string;
@@ -7,4 +7,8 @@ export interface Factura {
     valor: string;
     descricao: string;
     nuit: number ;
+  }
+
+  export interface Factura extends FacturaCreate {
+    id: string;  // O Prisma vai gerar o ID automaticamente
   }

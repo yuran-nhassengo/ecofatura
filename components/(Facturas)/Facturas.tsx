@@ -1,6 +1,6 @@
 "use client";
 
-import { Factura } from "@/app/types/Factura";
+import { Factura, FacturaCreate } from "@/app/types/Factura";
 import React, { useState, useRef, useEffect } from "react";
 import { FaTrash, FaInfoCircle } from "react-icons/fa";
 
@@ -12,7 +12,7 @@ const IVA_FIXED = 23;
 export const Facturas: React.FC = () => {
   const [facturas, setFacturas] = useState<Factura[]>([]);
 
-  const [form, setForm] = useState<Factura>({
+  const [form, setForm] = useState<FacturaCreate>({
     codigo: "",
     nome: "",
     tipo: "",
@@ -72,7 +72,7 @@ export const Facturas: React.FC = () => {
     };
 
     if (selectedFacturaIndex !== null) {
-      const response = await fetch(`/api/facturas/${facturas[selectedFacturaIndex].codigo}`, {
+      const response = await fetch(`/api/facturas/${facturas[selectedFacturaIndex].id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -169,13 +169,24 @@ export const Facturas: React.FC = () => {
     setShowDeleteModal(true);
   };
 
-  const confirmSingleDelete = () => {
-    const updatedFacturas = facturas.filter(
-      (_, index) => index !== deleteIndex
-    );
+  const confirmSingleDelete = async () => {
+    const facturaToDelete = facturas[deleteIndex!];
+
+  try {
+    
+    await fetch(`/api/facturas/${facturaToDelete.id}`, {
+      method: "DELETE",
+    });
+
+    
+    const updatedFacturas = facturas.filter((_, index) => index !== deleteIndex);
     setFacturas(updatedFacturas);
     setDeleteIndex(null);
-    setShowDeleteModal(false);
+    setShowDeleteModal(false); 
+
+  } catch (error) {
+    console.error("Erro ao excluir fatura", error);
+  }
   };
 
   const cancelDelete = () => {

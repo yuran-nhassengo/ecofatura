@@ -3,6 +3,12 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+// Função para validar CUID
+const isValidCUID = (id: string): boolean => {
+    const cuidRegex = /^[a-z0-9]{25}$/; // Padrão para CUID
+    return cuidRegex.test(id);
+};
+
 
 export const createFactura = async (
 
@@ -57,6 +63,11 @@ export const updateFactura = async (
         nuit?: number;
     }
 ) => {
+
+    if (!isValidCUID(id)) {
+        throw new Error('ID fornecido não é um CUID válido.');
+    }
+    
     const factura = await prisma.factura.update({
         where: { id },
         data
