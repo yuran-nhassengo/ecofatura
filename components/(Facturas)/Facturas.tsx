@@ -121,8 +121,9 @@ export const Facturas: React.FC = () => {
 
   const sortedFacturas = React.useMemo(() => {
   const sortableItems = Array.isArray(facturas) ? [...facturas] : [];
+  
   if (sortConfig.key) {
-    sortableItems.sort((a, b) => {
+    sortableItems.sort((a:any, b:any) => {
       if (sortConfig.key === "valor") {
         return sortConfig.direction === "ascending"
           ? parseFloat(a[sortConfig.key]) - parseFloat(b[sortConfig.key])
