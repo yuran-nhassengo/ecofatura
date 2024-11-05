@@ -155,13 +155,27 @@ export const Facturas: React.FC = () => {
     }
   };
 
-  const confirmDelete = () => {
-    const updatedFacturas = facturas.filter(
-      (_, index) => !selectedIndices.includes(index)
-    );
-    setFacturas(updatedFacturas);
-    setSelectedIndices([]);
-    setShowDeleteModal(false);
+  const confirmDelete = async () => {
+    const facturasToDelete = selectedIndices.map(index => facturas[index]);
+
+    try {
+      
+      for (const factura of facturasToDelete) {
+        await fetch(`/api/facturas/${factura.id}`, {
+          method: "DELETE",
+        });
+      }
+  
+     
+      const updatedFacturas = facturas.filter((_, index) => !selectedIndices.includes(index));
+      setFacturas(updatedFacturas);
+      setSelectedIndices([]); 
+      setShowDeleteModal(false); 
+  
+    } catch (error) {
+      console.error("Erro ao excluir faturas", error);
+      
+    }
   };
 
   const handleSingleDelete = (index: number) => {
