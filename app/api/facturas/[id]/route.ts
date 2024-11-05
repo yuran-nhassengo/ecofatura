@@ -31,6 +31,6 @@ export async function GET(request: Request, { params }: { params: { id: string }
       return NextResponse.json(factura); 
     } catch (error) {
       console.error(error);
-      return NextResponse.json({ error: 'Error' }, { status: 500 }); /
+      return NextResponse.json({ error: 'Error' }, { status: 500 }); 
     }
   }
