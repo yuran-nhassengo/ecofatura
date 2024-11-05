@@ -123,7 +123,7 @@ export const Facturas: React.FC = () => {
   const sortableItems = Array.isArray(facturas) ? [...facturas] : [];
   
   if (sortConfig.key) {
-    sortableItems.sort((a:any, b:any) => {
+    sortableItems.sort((a: Record<string, any>, b: Record<string, any>) => {
       if (sortConfig.key === "valor") {
         return sortConfig.direction === "ascending"
           ? parseFloat(a[sortConfig.key]) - parseFloat(b[sortConfig.key])
