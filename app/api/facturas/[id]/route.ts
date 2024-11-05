@@ -1,4 +1,4 @@
-import { deleteFactura, updateFactura } from "@/app/services/factura";
+import { deleteFactura, getFacturaById, updateFactura } from "@/app/services/factura";
 import { NextResponse } from "next/server";
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
@@ -16,6 +16,21 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
         const deletedFactura = await deleteFactura((params.id));
         return NextResponse.json(deletedFactura);
     } catch (error) {
-        return NextResponse.json({ error: 'Failed to delete invoice' }, { status: 500 });
+        return NextResponse.json({ error: 'Erro ao tentar deletar o item' }, { status: 500 });
     }
 }
+
+export async function GET(request: Request, { params }: { params: { id: string } }) {
+    try {
+      const factura = await getFacturaById(params.id); 
+  
+      if (!factura) {
+        return NextResponse.json({ error: 'Factura ou Cotacao nao encontrada' }, { status: 404 }); 
+      }
+  
+      return NextResponse.json(factura); 
+    } catch (error) {
+      console.error(error);
+      return NextResponse.json({ error: 'Error' }, { status: 500 }); /
+    }
+  }
