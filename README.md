@@ -38,6 +38,8 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 Usar o Prisma apos o clone
 
-1- npx prisma migrate dev --name init
-2- npx prisma generate
-3- npx prisma studio
+1: Criar o arquivo .env (na pasta raiz, a mesma pasta em que o gitignore esta);
+2-Adicione a variável , no arquivo .env:  **DATABASE_URL="file:./dev.db"**
+3- npx prisma migrate dev --name init
+4- npx prisma generate
+5- npx prisma studio
