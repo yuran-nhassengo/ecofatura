@@ -120,32 +120,35 @@ export const Facturas: React.FC = () => {
   };
 
   const sortedFacturas = React.useMemo(() => {
-    const sortableItems = Array.isArray(facturas) ? [...facturas] : [];
-  
-    if (sortConfig.key) {
-      sortableItems.sort((a: Factura, b: Factura) => {
-        const key = sortConfig.key as keyof Factura; // Define que o key é uma chave válida do tipo Factura
-  
+    // Ordena diretamente o array facturas, sem precisar de uma variável intermediária
+    return Array.isArray(facturas) ? [...facturas].sort((a: Factura, b: Factura) => {
+      if (sortConfig.key) {
+        const key = sortConfig.key as keyof Factura; // Define que key é uma chave válida do tipo Factura
+      
         if (key === "valor") {
+          const aValue = parseFloat(a[key] as string);
+          const bValue = parseFloat(b[key] as string);
           return sortConfig.direction === "ascending"
-            ? parseFloat(a[key] as string) - parseFloat(b[key] as string)
-            : parseFloat(b[key] as string) - parseFloat(a[key] as string);
+            ? aValue - bValue
+            : bValue - aValue;
         } else if (key === "data") {
+          const aDate = new Date(a[key] as string | Date).getTime();
+          const bDate = new Date(b[key] as string | Date).getTime();
           return sortConfig.direction === "ascending"
-            ? new Date(a[key] as string | Date).getTime() -
-                new Date(b[key] as string | Date).getTime()
-            : new Date(b[key] as string | Date).getTime() -
-                new Date(a[key] as string | Date).getTime();
+            ? aDate - bDate
+            : bDate - aDate;
         } else {
+          const aString = a[key] as string;
+          const bString = b[key] as string;
           return sortConfig.direction === "ascending"
-            ? (a[key] as string).localeCompare(b[key] as string)
-            : (b[key] as string).localeCompare(a[key] as string);
+            ? aString.localeCompare(bString)
+            : bString.localeCompare(aString);
         }
-      });
-    }
+      }
+      return 0; // Retorna 0 se `sortConfig.key` não estiver definido
+    }) : []; // Retorna um array vazio se `facturas` não for um array
+  }, [facturas, sortConfig]); // Dependências do useMemo
   
-    return sortableItems;
-  }, [facturas, sortConfig]);
 
   const handleEdit = (index: number) => {
     setForm(facturas[index]);
