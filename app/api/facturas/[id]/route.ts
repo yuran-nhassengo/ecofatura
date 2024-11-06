@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 // PUT - Atualizar fatura
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
-    const { id } = params;  // Acesso ao parâmetro da URL
+    const { id } = params;
     const body = await request.json();
     try {
         const updatedFactura = await updateFactura(id, body);
@@ -15,7 +15,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
 // DELETE - Deletar fatura
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
-    const { id } = params;  // Acesso ao parâmetro da URL
+    const { id } = params;
     try {
         const deletedFactura = await deleteFactura(id);
         return NextResponse.json(deletedFactura);
@@ -26,7 +26,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
 
 // GET - Obter fatura
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-    const { id } = params;  // Acesso ao parâmetro da URL
+    const { id } = params;
     try {
         const factura = await getFacturaById(id);
 
