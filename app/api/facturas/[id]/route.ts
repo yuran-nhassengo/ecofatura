@@ -2,8 +2,8 @@ import { deleteFactura, getFacturaById, updateFactura } from "@/app/services/fac
 import { NextRequest, NextResponse } from "next/server";
 
 // PUT - Atualizar fatura
-export async function PUT(request: NextRequest, context: { params: { id: string } }) {
-    const { id } = context.params; // Acessa o id corretamente
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+    const { id } = params;  // Acesso ao parâmetro da URL
     const body = await request.json();
     try {
         const updatedFactura = await updateFactura(id, body);
@@ -14,8 +14,8 @@ export async function PUT(request: NextRequest, context: { params: { id: string 
 }
 
 // DELETE - Deletar fatura
-export async function DELETE(request: NextRequest, context: { params: { id: string } }) {
-    const { id } = context.params; // Acessa o id corretamente
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+    const { id } = params;  // Acesso ao parâmetro da URL
     try {
         const deletedFactura = await deleteFactura(id);
         return NextResponse.json(deletedFactura);
@@ -25,8 +25,8 @@ export async function DELETE(request: NextRequest, context: { params: { id: stri
 }
 
 // GET - Obter fatura
-export async function GET(request: NextRequest, context: { params: { id: string } }) {
-    const { id } = context.params; // Acessa o id corretamente
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+    const { id } = params;  // Acesso ao parâmetro da URL
     try {
         const factura = await getFacturaById(id);
 
