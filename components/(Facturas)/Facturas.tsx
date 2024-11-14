@@ -566,11 +566,11 @@ export const Facturas: React.FC = () => {
                     </button>
                   )}
                   {/*yuyuuuuuuuuuu botao esta aqui*/}
-                  <button className="bg-blue-500 text-white py-1 px-3 rounded mb-2 hover:bg-blue-600">
+                  <button className="bg-blue-500 text-white py-1 px-2 rounded mb-2 hover:bg-blue-600">
                     PDF
                   </button>
                   <button
-                    className="bg-yellow-500 text-white py-1 px-3 rounded mb-2 lg:ml-2 hover:bg-yellow-600"
+                    className="bg-yellow-500 text-white py-1 px-2 rounded mb-2 lg:ml-2 hover:bg-yellow-600"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleEdit(index);
@@ -579,7 +579,7 @@ export const Facturas: React.FC = () => {
                     Editar
                   </button>
                   <button
-                    className="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 lg:ml-2"
+                    className="bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 lg:ml-2"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleSingleDelete(index);
