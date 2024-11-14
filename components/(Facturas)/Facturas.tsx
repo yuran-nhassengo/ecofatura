@@ -4,10 +4,7 @@ import { Factura, FacturaCreate } from "@/app/types/Factura";
 import React, { useState, useRef, useEffect } from "react";
 import { FaTrash, FaInfoCircle } from "react-icons/fa";
 
-const IVA_FIXED = 23;
-
-
-
+const IVA_FIXED = 16;
 
 export const Facturas: React.FC = () => {
   const [facturas, setFacturas] = useState<Factura[]>([]);
@@ -53,15 +50,14 @@ export const Facturas: React.FC = () => {
     fetchFacturas();
   }, []);
 
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
 
-    const updatedValue = name === 'nuit' ? parseInt(value, 10) : value;
+    const updatedValue = name === "nuit" ? parseInt(value, 10) : value;
 
-    setForm({ ...form, [name]: updatedValue  });
+    setForm({ ...form, [name]: updatedValue });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -72,20 +68,22 @@ export const Facturas: React.FC = () => {
     };
 
     if (selectedFacturaIndex !== null) {
-      const response = await fetch(`/api/facturas/${facturas[selectedFacturaIndex].id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        `/api/facturas/${facturas[selectedFacturaIndex].id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
       const updatedFactura = await response.json();
       const updatedFacturas = [...facturas];
       updatedFacturas[selectedFacturaIndex] = updatedFactura;
       setFacturas(updatedFacturas);
       setSelectedFacturaIndex(null);
     } else {
-
       const response = await fetch("/api/facturas", {
         method: "POST",
         headers: {
@@ -95,7 +93,6 @@ export const Facturas: React.FC = () => {
       });
       const newFactura = await response.json();
       setFacturas([...facturas, newFactura]);
-
     }
 
     setForm({
@@ -121,34 +118,35 @@ export const Facturas: React.FC = () => {
 
   const sortedFacturas = React.useMemo(() => {
     // Ordena diretamente o array facturas, sem precisar de uma variável intermediária
-    return Array.isArray(facturas) ? [...facturas].sort((a: Factura, b: Factura) => {
-      if (sortConfig.key) {
-        const key = sortConfig.key as keyof Factura; // Define que key é uma chave válida do tipo Factura
-      
-        if (key === "valor") {
-          const aValue = parseFloat(a[key] as string);
-          const bValue = parseFloat(b[key] as string);
-          return sortConfig.direction === "ascending"
-            ? aValue - bValue
-            : bValue - aValue;
-        } else if (key === "data") {
-          const aDate = new Date(a[key] as string | Date).getTime();
-          const bDate = new Date(b[key] as string | Date).getTime();
-          return sortConfig.direction === "ascending"
-            ? aDate - bDate
-            : bDate - aDate;
-        } else {
-          const aString = a[key] as string;
-          const bString = b[key] as string;
-          return sortConfig.direction === "ascending"
-            ? aString.localeCompare(bString)
-            : bString.localeCompare(aString);
-        }
-      }
-      return 0; // Retorna 0 se `sortConfig.key` não estiver definido
-    }) : []; // Retorna um array vazio se `facturas` não for um array
+    return Array.isArray(facturas)
+      ? [...facturas].sort((a: Factura, b: Factura) => {
+          if (sortConfig.key) {
+            const key = sortConfig.key as keyof Factura; // Define que key é uma chave válida do tipo Factura
+
+            if (key === "valor") {
+              const aValue = parseFloat(a[key] as string);
+              const bValue = parseFloat(b[key] as string);
+              return sortConfig.direction === "ascending"
+                ? aValue - bValue
+                : bValue - aValue;
+            } else if (key === "data") {
+              const aDate = new Date(a[key] as string | Date).getTime();
+              const bDate = new Date(b[key] as string | Date).getTime();
+              return sortConfig.direction === "ascending"
+                ? aDate - bDate
+                : bDate - aDate;
+            } else {
+              const aString = a[key] as string;
+              const bString = b[key] as string;
+              return sortConfig.direction === "ascending"
+                ? aString.localeCompare(bString)
+                : bString.localeCompare(aString);
+            }
+          }
+          return 0; // Retorna 0 se `sortConfig.key` não estiver definido
+        })
+      : []; // Retorna um array vazio se `facturas` não for um array
   }, [facturas, sortConfig]); // Dependências do useMemo
-  
 
   const handleEdit = (index: number) => {
     setForm(facturas[index]);
@@ -163,25 +161,23 @@ export const Facturas: React.FC = () => {
   };
 
   const confirmDelete = async () => {
-    const facturasToDelete = selectedIndices.map(index => facturas[index]);
+    const facturasToDelete = selectedIndices.map((index) => facturas[index]);
 
     try {
-      
       for (const factura of facturasToDelete) {
         await fetch(`/api/facturas/${factura.id}`, {
           method: "DELETE",
         });
       }
-  
-     
-      const updatedFacturas = facturas.filter((_, index) => !selectedIndices.includes(index));
+
+      const updatedFacturas = facturas.filter(
+        (_, index) => !selectedIndices.includes(index)
+      );
       setFacturas(updatedFacturas);
-      setSelectedIndices([]); 
-      setShowDeleteModal(false); 
-  
+      setSelectedIndices([]);
+      setShowDeleteModal(false);
     } catch (error) {
       console.error("Erro ao excluir faturas", error);
-      
     }
   };
 
@@ -193,21 +189,20 @@ export const Facturas: React.FC = () => {
   const confirmSingleDelete = async () => {
     const facturaToDelete = facturas[deleteIndex!];
 
-  try {
-    
-    await fetch(`/api/facturas/${facturaToDelete.id}`, {
-      method: "DELETE",
-    });
+    try {
+      await fetch(`/api/facturas/${facturaToDelete.id}`, {
+        method: "DELETE",
+      });
 
-    
-    const updatedFacturas = facturas.filter((_, index) => index !== deleteIndex);
-    setFacturas(updatedFacturas);
-    setDeleteIndex(null);
-    setShowDeleteModal(false); 
-
-  } catch (error) {
-    console.error("Erro ao excluir fatura", error);
-  }
+      const updatedFacturas = facturas.filter(
+        (_, index) => index !== deleteIndex
+      );
+      setFacturas(updatedFacturas);
+      setDeleteIndex(null);
+      setShowDeleteModal(false);
+    } catch (error) {
+      console.error("Erro ao excluir fatura", error);
+    }
   };
 
   const cancelDelete = () => {
@@ -570,8 +565,12 @@ export const Facturas: React.FC = () => {
                       <FaInfoCircle size={30} />
                     </button>
                   )}
+                  {/*yuyuuuuuuuuuu botao esta aqui*/}
+                  <button className="bg-blue-500 text-white py-1 px-3 rounded mb-2 hover:bg-blue-600">
+                    PDF
+                  </button>
                   <button
-                    className="bg-yellow-500 text-white py-1 px-3 rounded mb-2 hover:bg-yellow-600"
+                    className="bg-yellow-500 text-white py-1 px-3 rounded mb-2 lg:ml-2 hover:bg-yellow-600"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleEdit(index);
