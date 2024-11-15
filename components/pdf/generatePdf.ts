@@ -37,7 +37,7 @@ export const gerarPdf = ({ itens, logoUrl, empresaInfo }: CotacaoProps,factura:F
   yOffset += (empresaInfo.length + 2) * 8;
   let  h2yO = yOffset ;
   doc.setFontSize(30);
-  doc.text('Factura de Serviço', 10, yOffset);
+  doc.text(`${factura.tipo} de Serviço`, 10, yOffset);
   yOffset += 10;
   doc.setFontSize(10);
   doc.text('Número da factura:', 45, yOffset);
