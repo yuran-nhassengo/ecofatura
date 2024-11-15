@@ -1,4 +1,4 @@
-import { createFactura, deleteFactura, getAllFacturas, updateFactura } from "@/app/services/factura";
+import { createFactura, getAllFacturas  } from "@/app/services/factura";
 import { NextResponse } from "next/server";
 
 
