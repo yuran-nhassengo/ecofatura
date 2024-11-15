@@ -1,13 +1,22 @@
 "use client";
 
-import { Factura, FacturaCreate } from "@/app/types/Factura";
+import { Factura, FacturaCreate, ItemCotacao } from "@/app/types/Factura";
 import React, { useState, useRef, useEffect } from "react";
 import { FaTrash, FaInfoCircle } from "react-icons/fa";
+import { gerarPdf } from "../pdf/generatePdf";
+
+import empresaInfo from '../../components/pdf/empresaInfo'
+import {ItensCotacao} from '../../components/pdf/itensCotacao'
 
 const IVA_FIXED = 16;
-
+const logo = '/binario.jpg';
 export const Facturas: React.FC = () => {
   const [facturas, setFacturas] = useState<Factura[]>([]);
+
+  const handleGerarPdf = (logoUrl:string,empresaInfo:string[],itens:ItemCotacao[]) => {
+
+    gerarPdf({ itens, logoUrl, empresaInfo });
+  };
 
   const [form, setForm] = useState<FacturaCreate>({
     codigo: "",
@@ -565,8 +574,14 @@ export const Facturas: React.FC = () => {
                       <FaInfoCircle size={30} />
                     </button>
                   )}
-                  {/*yuyuuuuuuuuuu botao esta aqui*/}
-                  <button className="bg-blue-500 text-white py-1 px-2 rounded mb-2 hover:bg-blue-600">
+
+                  <button 
+                      className="bg-blue-500 text-white py-1 px-2 rounded mb-2 hover:bg-blue-600"
+                      onClick={(e) =>{
+                        e.preventDefault();
+                        handleGerarPdf(logo,empresaInfo,ItensCotacao)}
+                      }
+                  >
                     PDF
                   </button>
                   <button

@@ -12,3 +12,14 @@ export interface FacturaCreate {
   export interface Factura extends FacturaCreate {
     id: string;  // O Prisma vai gerar o ID automaticamente
   }
+
+  export interface ItemCotacao {
+    descricao: string;
+    precoUnitario: number;
+  }
+
+  export interface CotacaoProps {
+    itens: ItemCotacao[];
+    logoUrl: string;
+    empresaInfo: string[];
+  }

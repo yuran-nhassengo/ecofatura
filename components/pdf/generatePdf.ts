@@ -1,16 +1,8 @@
 import { jsPDF } from 'jspdf';
 
-export interface ItemCotacao {
-  descricao: string;
-  quantidade: number;
-  precoUnitario: number;
-}
+import {CotacaoProps } from '../../app/types/Factura'
 
-interface CotacaoProps {
-  itens: ItemCotacao[];
-  logoUrl: string;
-  empresaInfo: string[];
-}
+
 
 export const gerarPdf = ({ itens, logoUrl, empresaInfo }: CotacaoProps) => {
   const doc = new jsPDF();
@@ -73,9 +65,7 @@ export const gerarPdf = ({ itens, logoUrl, empresaInfo }: CotacaoProps) => {
   yOffset += 10;
   doc.setFontSize(10);
   doc.text('Descrição', 60, yOffset);
-  doc.text('Quantidade', 120, yOffset);
-  doc.text('Preço Unitário', 140, yOffset);
-  doc.text('Total', 180, yOffset);
+  doc.text('Valor', 180, yOffset);
 
   doc.setLineWidth(0.3); 
      doc.line(60, yOffset + 5, 200, yOffset + 5);  
@@ -83,9 +73,7 @@ export const gerarPdf = ({ itens, logoUrl, empresaInfo }: CotacaoProps) => {
 
   itens.forEach((item) => {
     doc.text(item.descricao, 60, yOffset);
-    doc.text(String(item.quantidade), 120, yOffset);
-    doc.text(`R$ ${item.precoUnitario.toFixed(2)}`, 140, yOffset);
-    doc.text(`R$ ${(item.quantidade * item.precoUnitario).toFixed(2)}`, 180, yOffset);
+    doc.text(`MZN ${(item.precoUnitario).toFixed(2)}`, 180, yOffset);
 
      
      doc.setLineWidth(0.3);  
@@ -94,8 +82,8 @@ export const gerarPdf = ({ itens, logoUrl, empresaInfo }: CotacaoProps) => {
   });
 
  
-  const subtotal = itens.reduce((sum, item) => sum + item.quantidade * item.precoUnitario, 0);
-  const iva = subtotal * 0.15; 
+  const subtotal = itens.reduce((sum, item) => sum +  item.precoUnitario, 0);
+  const iva = subtotal * 0.16; 
   const total = subtotal + iva;
   const prestacao = total *0.30;
 
@@ -107,7 +95,7 @@ export const gerarPdf = ({ itens, logoUrl, empresaInfo }: CotacaoProps) => {
      doc.line(60, yOffset + 5, 200, yOffset + 5);  
      yOffset += 10;  
 
-  doc.text(`IVA (15%) `, 60, yOffset);
+  doc.text(`IVA (16%) `, 60, yOffset);
   doc.text(` MZN ${iva.toFixed(2)}`, 180, yOffset);
   doc.setLineWidth(0.3);  
      doc.line(60, yOffset + 5, 200, yOffset + 5);  
@@ -135,19 +123,25 @@ export const gerarPdf = ({ itens, logoUrl, empresaInfo }: CotacaoProps) => {
   yOffset += 10;
   
   doc.text(`Numero da Conta:`, 60, yOffset);
-  doc.text(`28363651725618`, 90, yOffset);
+  doc.text(`1189273171001`, 90, yOffset);
   yOffset += 10;
   
-  doc.text(`Nib:`, 60, yOffset);
-  doc.text(`28363651725618`, 67, yOffset);
+  doc.text(`NIB:`, 60, yOffset);
+  doc.text(`000301180927317100145`, 67, yOffset);
   yOffset += 10;
 
   doc.setFontSize(15);
   doc.text(`Notas:`, 125, pgoY);
   pgoY +=10
   doc.setFontSize(10);
-  doc.text(`Esta é a segunda das três facturas que \n serão emitidas, na seguinte ordem:`, 125, pgoY);
-  
-  
+  doc.text(`\u2022   Esta é a segunda das três facturas que \n serão emitidas, na seguinte ordem:`, 125, pgoY);
+  pgoY +=10;
+  doc.text(`º  Factura 1-56% do valor total:`, 135, pgoY);
+  pgoY +=10;
+  doc.text(`º  Factura 2-30% do valor total:`, 135, pgoY);
+  pgoY +=10;
+  doc.text(`º  Factura 2-30% do valor total:`, 135, pgoY);
+  pgoY +=10;
+  doc.text(`\u2022   Observe a data de vencimento acima`, 125, pgoY);
   doc.save('cotacao.pdf');
 };
