@@ -8,9 +8,42 @@ import { gerarPdf } from "../pdf/generatePdf";
 import empresaInfo from '../../components/pdf/empresaInfo'
 import {ItensCotacao} from '../../components/pdf/itensCotacao'
 
+// Hook para capturar a largura da tela no lado do cliente
+const useScreenSize = () => {
+  const [screenWidth, setScreenWidth] = useState(0);
+
+  useEffect(() => {
+    // Função para atualizar a largura da tela
+    const updateScreenSize = () => {
+      setScreenWidth(window.innerWidth);
+    };
+
+    // Chama a função na montagem do componente
+    updateScreenSize();
+
+    // Atualiza a largura da tela sempre que a janela for redimensionada
+    window.addEventListener("resize", updateScreenSize);
+
+    // Limpa o ouvinte de evento quando o componente for desmontado
+    return () => {
+      window.removeEventListener("resize", updateScreenSize);
+    };
+  }, []);
+
+  // Retorna as variáveis de largura da tela
+  const isMiniphone = screenWidth <= 359;
+  const isMobile = screenWidth <= 780;
+  const isMin = screenWidth <= 1170;
+
+  return { isMiniphone, isMobile, isMin };
+};
+
 const IVA_FIXED = 16;
 const logo = '/binario.jpg';
 export const Facturas: React.FC = () => {
+
+  const { isMiniphone, isMobile, isMin } = useScreenSize();
+
   const [facturas, setFacturas] = useState<Factura[]>([]);
 
   const handleGerarPdf = (logoUrl:string,empresaInfo:string[],itens:ItemCotacao[],factura:FacturaCreate) => {
@@ -260,15 +293,7 @@ export const Facturas: React.FC = () => {
     };
   }, []);
 
-  const isMiniphone = () => {
-    return window.innerWidth <= 359;
-  };
-  const isMobile = () => {
-    return window.innerWidth <= 780;
-  };
-  const isMin = () => {
-    return window.innerWidth <= 1170;
-  };
+
 
   const calculateTotalWithIVA = (valor: string) => {
     return (parseFloat(valor) * (1 + IVA_FIXED / 100)).toFixed(2);
@@ -434,7 +459,7 @@ export const Facturas: React.FC = () => {
         <table className="min-w-full mt-6 border-collapse">
           <thead>
             <tr>
-              {!isMobile() && (
+              {!isMobile && (
                 <th className="p-3 border-b 2xl:border">
                   <input
                     type="checkbox"
@@ -452,7 +477,7 @@ export const Facturas: React.FC = () => {
                 Código
               </th>
 
-              {!isMobile() && (
+              {!isMobile && (
                 <th
                   onClick={() => requestSort("nome")}
                   className="cursor-pointer p-3 border-b 2xl:border"
@@ -460,7 +485,7 @@ export const Facturas: React.FC = () => {
                   Nome
                 </th>
               )}
-              {!isMiniphone() && (
+              {!isMiniphone && (
                 <th
                   onClick={() => requestSort("data")}
                   className="cursor-pointer p-3 border-b 2xl:border"
@@ -468,7 +493,7 @@ export const Facturas: React.FC = () => {
                   Data
                 </th>
               )}
-              {!isMobile() && (
+              {!isMobile && (
                 <th
                   onClick={() => requestSort("nuit")}
                   className="cursor-pointer p-3 border-b 2xl:border"
@@ -477,7 +502,7 @@ export const Facturas: React.FC = () => {
                 </th>
               )}
               {!isMobile ||
-                (!isMin() && (
+                (!isMin && (
                   <th
                     onClick={() => requestSort("tipo")}
                     className="cursor-pointer p-3 border-b 2xl:border"
@@ -486,7 +511,7 @@ export const Facturas: React.FC = () => {
                   </th>
                 ))}
               {!isMobile ||
-                (!isMin() && (
+                (!isMin && (
                   <th
                     onClick={() => requestSort("entidade")}
                     className="cursor-pointer p-3 border-b 2xl:border"
@@ -500,7 +525,7 @@ export const Facturas: React.FC = () => {
               >
                 Valor
               </th>
-              {!isMobile() && (
+              {!isMobile && (
                 <th className="p-3 border-b 2xl:border">
                   Total com IVA (%{IVA_FIXED})
                 </th>
@@ -515,13 +540,13 @@ export const Facturas: React.FC = () => {
                 key={index}
                 className="hover:bg-gray-100 dark:hover:bg-gray-900 cursor-pointer"
                 onClick={() => {
-                  if (isMobile()) {
+                  if (isMobile) {
                     setSelectedFactura(factura);
                     setShowDetailCard(true);
                   }
                 }}
               >
-                {!isMobile() && (
+                {!isMobile && (
                   <td className="p-3 border-b">
                     <input
                       type="checkbox"
@@ -536,33 +561,33 @@ export const Facturas: React.FC = () => {
                   </td>
                 )}
                 <td className="p-3 border-b text-center">{factura.codigo}</td>
-                {!isMobile() && (
+                {!isMobile && (
                   <td className="p-3 border-b text-center">{factura.nome}</td>
                 )}
-                {!isMiniphone() && (
+                {!isMiniphone && (
                   <td className="p-3 border-b text-center">{factura.data}</td>
                 )}
-                {!isMobile() && (
+                {!isMobile && (
                   <td className="p-3 border-b text-center">{factura.nuit}</td>
                 )}
                 {!isMobile ||
-                  (!isMin() && (
+                  (!isMin && (
                     <td className="p-3 border-b text-center">{factura.tipo}</td>
                   ))}
                 {!isMobile ||
-                  (!isMin() && (
+                  (!isMin && (
                     <td className="p-3 border-b text-center">
                       {factura.entidade}
                     </td>
                   ))}
                 <td className="p-3 border-b text-center">{factura.valor}</td>
-                {!isMobile() && (
+                {!isMobile && (
                   <td className="p-3 border-b text-center">
                     {calculateTotalWithIVA(factura.valor)}
                   </td>
                 )}
                 <td className="p-3 inline-grid lg:block border-b">
-                  {!isMobile() && (
+                  {!isMobile && (
                     <button
                       className="bg-transparent text-blue-500 hover:text-blue-700 text-lg lg:mr-3 left-3 lg:left-0 lg:top-2 p-2 relative"
                       onClick={(e) => {
