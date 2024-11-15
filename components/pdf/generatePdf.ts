@@ -1,12 +1,12 @@
 import { jsPDF } from 'jspdf';
 
-import {CotacaoProps } from '../../app/types/Factura'
+import {CotacaoProps,  FacturaCreate } from '../../app/types/Factura'
 
 
 
-export const gerarPdf = ({ itens, logoUrl, empresaInfo }: CotacaoProps) => {
+export const gerarPdf = ({ itens, logoUrl, empresaInfo }: CotacaoProps,factura:FacturaCreate) => {
   const doc = new jsPDF();
-
+  
 
   const novaMargemX = 130;  // Aumenta a distância entre o logo e as informações da empresa
 
@@ -41,7 +41,7 @@ export const gerarPdf = ({ itens, logoUrl, empresaInfo }: CotacaoProps) => {
   yOffset += 10;
   doc.setFontSize(10);
   doc.text('Número da factura:', 45, yOffset);
-  doc.text('1010/2024', 77, yOffset);
+  doc.text(`${factura.codigo}`, 77, yOffset);
   yOffset += 10;
   doc.text('Data de emissão:', 45, yOffset);
   doc.text('21/08/2024', 75, yOffset);

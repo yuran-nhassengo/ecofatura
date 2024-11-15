@@ -13,9 +13,9 @@ const logo = '/binario.jpg';
 export const Facturas: React.FC = () => {
   const [facturas, setFacturas] = useState<Factura[]>([]);
 
-  const handleGerarPdf = (logoUrl:string,empresaInfo:string[],itens:ItemCotacao[]) => {
+  const handleGerarPdf = (logoUrl:string,empresaInfo:string[],itens:ItemCotacao[],factura:FacturaCreate) => {
 
-    gerarPdf({ itens, logoUrl, empresaInfo });
+    gerarPdf({ itens, logoUrl, empresaInfo },factura);
   };
 
   const [form, setForm] = useState<FacturaCreate>({
@@ -579,7 +579,8 @@ export const Facturas: React.FC = () => {
                       className="bg-blue-500 text-white py-1 px-2 rounded mb-2 hover:bg-blue-600"
                       onClick={(e) =>{
                         e.preventDefault();
-                        handleGerarPdf(logo,empresaInfo,ItensCotacao)}
+                        setSelectedFactura(factura);
+                        handleGerarPdf(logo,empresaInfo,ItensCotacao,factura)}
                       }
                   >
                     PDF
