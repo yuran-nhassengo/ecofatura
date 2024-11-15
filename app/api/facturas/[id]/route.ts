@@ -21,6 +21,7 @@ export async function PUT(
 
 // DELETE - Deletar fatura
 export async function DELETE(
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> } // params é agora uma Promise
 ) {
   const { id } = await params; // Aguarde a resolução dos parâmetros
@@ -37,6 +38,7 @@ export async function DELETE(
 
 // GET - Obter fatura
 export async function GET(
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> } // params é agora uma Promise
 ) {
   const { id } = await params; // Aguarde a resolução dos parâmetros
