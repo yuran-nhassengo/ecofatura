@@ -7,6 +7,7 @@ import { gerarPdf } from "../pdf/generatePdf";
 
 import empresaInfo from '../../components/pdf/empresaInfo'
 import {ItensCotacao} from '../../components/pdf/itensCotacao'
+import { FacturaForm } from "./facturaform";
 
 // Hook para capturar a largura da tela no lado do cliente
 const useScreenSize = () => {
@@ -301,9 +302,10 @@ export const Facturas: React.FC = () => {
 
   return (
     <div className="max-w-2xl md:max-w-4xl lg:max-w-6xl 2xl:max-w-7xl mx-auto m-6 p-6 rounded-lg shadow-lg ">
-      <h1 className="text-3xl font-semibold text-center mb-4">
+      <h1 className="text-3xl font-semibold text-center mb-8">
         Gerenciamento de Faturas
       </h1>
+      <FacturaForm/>
       <button
         className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-300 mb-4"
         onClick={() => {
