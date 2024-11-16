@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { HiTrash } from "react-icons/hi";  // Importando o ícone de lixo
+import { HiTrash } from "react-icons/hi";
 
 export const FacturaForm = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setForm] = useState({
     tipo: "",
     data: "",
     codigo: "",
@@ -18,7 +18,7 @@ export const FacturaForm = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setForm({ ...formData, [name]: value });
   };
 
   const handleProductChange = (index, field, value) => {
@@ -31,23 +31,28 @@ export const FacturaForm = () => {
       updatedProdutos[index].total = quantidade * valor;
     }
 
-    setFormData({ ...formData, produtos: updatedProdutos });
+    setForm({ ...formData, produtos: updatedProdutos });
   };
 
   const addProduct = () => {
-    setFormData({
+    setForm({
       ...formData,
-      produtos: [...formData.produtos, { nome: "", quantidade: 0, valor: 0, total: 0 }],
+      produtos: [
+        ...formData.produtos,
+        { nome: "", quantidade: 0, valor: 0, total: 0 },
+      ],
     });
   };
 
   const removeProduct = (index) => {
     const updatedProdutos = formData.produtos.filter((_, i) => i !== index);
-    setFormData({ ...formData, produtos: updatedProdutos });
+    setForm({ ...formData, produtos: updatedProdutos });
   };
 
   const calculateTotal = () => {
-    return formData.produtos.reduce((sum, produto) => sum + produto.total, 0).toFixed(2);
+    return formData.produtos
+      .reduce((sum, produto) => sum + produto.total, 0)
+      .toFixed(2);
   };
 
   const handleNextStep = () => {
@@ -65,8 +70,7 @@ export const FacturaForm = () => {
 
   const handleSubmit = () => {
     console.log("Form Submitted", formData);
-    // Reset form
-    setFormData({
+    setForm({
       tipo: "",
       data: "",
       codigo: "",
@@ -80,8 +84,7 @@ export const FacturaForm = () => {
   };
 
   const handleCancel = () => {
-    // Resetando os dados do formulário para o estado inicial
-    setFormData({
+    setForm({
       tipo: "",
       data: "",
       codigo: "",
@@ -91,16 +94,19 @@ export const FacturaForm = () => {
       descricao: "",
       produtos: [],
     });
-    // Voltando ao passo inicial
     setFormStep(0);
   };
   const handleCloseForm = () => {
     setIsFormVisible(false);
   };
 
-   // Função para renderizar o progresso
-   const renderProgress = () => {
-    const steps = ["Informações Gerais", "Detalhes de Factura", "Produtos", "Resumo"];
+  const renderProgress = () => {
+    const steps = [
+      "Informações Gerais",
+      "Detalhes de Factura",
+      "Produtos",
+      "Resumo",
+    ];
     return (
       <div className="mb-6">
         <div className="flex justify-between mb-2 flex-wrap">
@@ -141,7 +147,6 @@ export const FacturaForm = () => {
         <div className="shadow-md rounded-lg p-4 lg:p-6 mt-6">
           <h1 className="text-2xl font-bold mb-4">Formulario de Factura</h1>
 
-          {/* Exibir a barra de progresso */}
           {renderProgress()}
 
           {formStep === 0 && (
@@ -211,7 +216,7 @@ export const FacturaForm = () => {
                 <button
                   type="button"
                   onClick={handleCancel}
-                  className="bg-red-500 dark:bg-red-700 text-white px-4 py-2 rounded-md hover:bg-red-600 dark:hover:bg-red-800"
+                  className="bg-green-500 dark:bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-600 dark:hover:bg-green-800"
                 >
                   Limpar
                 </button>
@@ -284,45 +289,62 @@ export const FacturaForm = () => {
             </div>
           )}
 
-{formStep === 2 && (
+          {formStep === 2 && (
             <div>
               <h3 className="text-lg font-semibold mb-4 ">Produtos</h3>
               {formData.produtos.map((produto, index) => (
-               <div key={index} className="flex flex-col sm:flex-row items-center gap-4 mb-4 p-4 dark:bg-gray-800 bg-gray-100 rounded-md">
-               <div className="w-full sm:w-2/5">
-                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Nome do Produto</label>
-                 <input
-                   type="text"
-                   placeholder="Nome do Produto"
-                   value={produto.nome}
-                   onChange={(e) => handleProductChange(index, "nome", e.target.value)}
-                   className="w-full p-2 border border-gray-300 rounded-md dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
-                 />
-               </div>
-             
-               <div className="w-full sm:w-1/5">
-                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Quantidade</label>
-                 <input
-                   type="number"
-                   placeholder="Quantidade"
-                   value={produto.quantidade}
-                   onChange={(e) => handleProductChange(index, "quantidade", e.target.value)}
-                   className="w-full p-2 border border-gray-300 rounded-md dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
-                 />
-               </div>
-             
-               <div className="w-full sm:w-1/5">
-                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Valor</label>
-                 <input
-                   type="number"
-                   placeholder="Valor Unitário"
-                   value={produto.valor}
-                   onChange={(e) => handleProductChange(index, "valor", e.target.value)}
-                   className="w-full p-2 border border-gray-300 rounded-md dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
-                 />
-               </div>
-                  <div className="w-full sm:w-1/5 flex items-center justify-between">
-                    <span>Total: {produto.total.toFixed(2)}</span>
+                <div
+                  key={index}
+                  className="flex flex-col md:flex-row items-center gap-4 mb-4 p-4 dark:bg-gray-800 bg-gray-50 rounded-md"
+                >
+                  <div className="w-full md:w-2/5">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                      Nome do Produto
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Nome do Produto"
+                      value={produto.nome}
+                      onChange={(e) =>
+                        handleProductChange(index, "nome", e.target.value)
+                      }
+                      className="w-full p-2 border border-gray-300 rounded-md dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
+                    />
+                  </div>
+
+                  <div className="w-full md:w-1/5">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                      Quantidade
+                    </label>
+                    <input
+                      type="number"
+                      placeholder="Quantidade"
+                      value={produto.quantidade}
+                      onChange={(e) =>
+                        handleProductChange(index, "quantidade", e.target.value)
+                      }
+                      className="w-full p-2 border border-gray-300 rounded-md dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
+                    />
+                  </div>
+
+                  <div className="w-full md:w-1/5">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                      Valor
+                    </label>
+                    <input
+                      type="number"
+                      placeholder="Valor Unitário"
+                      value={produto.valor}
+                      onChange={(e) =>
+                        handleProductChange(index, "valor", e.target.value)
+                      }
+                      className="w-full p-2 border border-gray-300 rounded-md dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
+                    />
+                  </div>
+                  <div className="w-full md:w-1/5 flex items-center justify-between">
+                    <span className="md:mt-3">
+                      Total: {produto.total.toFixed(2)}
+                    </span>
                     <button
                       onClick={() => removeProduct(index)}
                       className="text-red-500 hover:text-red-700"
@@ -346,7 +368,7 @@ export const FacturaForm = () => {
               </div>
 
               <div className="flex justify-between mt-4">
-              <button
+                <button
                   type="button"
                   onClick={handlePrevStep}
                   className="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-800"
@@ -368,21 +390,41 @@ export const FacturaForm = () => {
             <div className="space-y-4">
               <h2 className="text-2xl font-bold">Resumo da Factura</h2>
               <div>
-                <p><strong>Tipo:</strong> {formData.tipo}</p>
-                <p><strong>Data:</strong> {formData.data}</p>
-                <p><strong>Código:</strong> {formData.codigo}</p>
-                <p><strong>Nome:</strong> {formData.nome}</p>
-                <p><strong>NUIT:</strong> {formData.nuit}</p>
-                <p><strong>Entidade:</strong> {formData.entidade}</p>
-                <p><strong>Descrição:</strong> {formData.descricao}</p>
+                <p>
+                  <strong>Tipo:</strong> {formData.tipo}
+                </p>
+                <p>
+                  <strong>Data:</strong> {formData.data}
+                </p>
+                <p>
+                  <strong>Código:</strong> {formData.codigo}
+                </p>
+                <p>
+                  <strong>Nome:</strong> {formData.nome}
+                </p>
+                <p>
+                  <strong>NUIT:</strong> {formData.nuit}
+                </p>
+                <p>
+                  <strong>Entidade:</strong> {formData.entidade}
+                </p>
+                <p>
+                  <strong>Descrição:</strong> {formData.descricao}
+                </p>
               </div>
 
               <div className="mt-4">
                 <h3 className="text-lg font-semibold">Produtos:</h3>
                 {formData.produtos.map((produto, index) => (
-                  <div key={index} className="flex justify-between items-center py-2">
+                  <div
+                    key={index}
+                    className="flex justify-between items-center py-2"
+                  >
                     <span>{produto.nome}</span>
-                    <span>{produto.quantidade} x {produto.valor} = {produto.total.toFixed(2)}</span>
+                    <span>
+                      {produto.quantidade} x {produto.valor} ={" "}
+                      {produto.total.toFixed(2)}
+                    </span>
                   </div>
                 ))}
                 <h3 className="text-xl font-bold mt-2">
@@ -391,7 +433,7 @@ export const FacturaForm = () => {
               </div>
 
               <div className="flex justify-between mt-4">
-              <button
+                <button
                   type="button"
                   onClick={handlePrevStep}
                   className="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-800"
