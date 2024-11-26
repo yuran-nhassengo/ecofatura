@@ -116,7 +116,7 @@ export const FacturaForm = () => {
               className={`w-full sm:w-1/4 text-center cursor-pointer ${
                 formStep === index ? "font-bold text-blue-500" : "text-gray-500"
               }`}
-              onClick={() => setFormStep(index)} // Adiciona o evento de clique
+              onClick={() => setFormStep(index)} 
             >
               {step}
             </div>
