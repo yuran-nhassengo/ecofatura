@@ -23,3 +23,10 @@ export interface FacturaCreate {
     logoUrl: string;
     empresaInfo: string[];
   }
+
+  export interface Produto {
+    nome: string;
+    quantidade: number;
+    valor: number;
+    total: number;
+}
