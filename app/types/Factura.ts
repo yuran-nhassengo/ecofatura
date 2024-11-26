@@ -7,6 +7,7 @@ export interface FacturaCreate {
     valor: string;
     descricao: string;
     nuit: number ;
+    produtos: Produto[]
   }
 
   export interface Factura extends FacturaCreate {
@@ -23,3 +24,10 @@ export interface FacturaCreate {
     logoUrl: string;
     empresaInfo: string[];
   }
+
+  export interface Produto {
+    nome: string;
+    quantidade: number;
+    valor: number;
+    total: number;
+}

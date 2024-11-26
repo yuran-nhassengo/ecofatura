@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { Produto } from "../types/Factura";
 
 
 const prisma = new PrismaClient();
@@ -19,7 +20,8 @@ export const createFactura = async (
     entidade: string,
     valor: string,
     descricao:string,
-    nuit: number
+    nuit: number,
+    produtos: Produto[]
 
 ) => {
     const factura = await prisma.factura.create({
@@ -31,7 +33,15 @@ export const createFactura = async (
                 entidade,
                 valor,
                 descricao,
-                nuit
+                nuit,
+                produtos: {
+                    create: produtos.map((produto) => ({
+                        nome: produto.nome,
+                        quantidade: produto.quantidade,
+                        valor: produto.valor,
+                        total: produto.total, // Calculado anteriormente no frontend
+                    })),
+                }
             },
     });
 
