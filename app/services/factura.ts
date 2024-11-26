@@ -31,7 +31,8 @@ export const createFactura = async (
                 entidade,
                 valor,
                 descricao,
-                nuit
+                nuit,
+                produtos 
             },
     });
 
