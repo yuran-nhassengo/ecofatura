@@ -23,4 +23,15 @@ model Factura {
   nuit      Int?  
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())  
+  produtos    Produto[] // Relacionamento com os produtos (um para muitos)
+}
+
+model Produto {
+  id          String    @id @default(cuid()) // Identificador único
+  nome        String    // Nome do produto
+  quantidade  Int       // Quantidade do produto
+  valor       Float     // Valor unitário do produto
+  total       Float     // Total do produto (quantidade * valor)
+  facturaId   String    // Relacionamento com a fatura
+  factura     Factura   @relation(fields: [facturaId], references: [id]) // Relacionamento com a fatura
 }
