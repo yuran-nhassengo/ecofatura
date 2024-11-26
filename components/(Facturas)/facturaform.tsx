@@ -1,56 +1,69 @@
+import { Factura, FacturaCreate } from "@/app/types/Factura";
 import React, { useState } from "react";
 import { HiTrash } from "react-icons/hi";
+import { Produto } from "../../app/types/Factura";
 
 export const FacturaForm = () => {
-  const [formData, setForm] = useState({
+
+  const [facturas, setFacturas] = useState<Factura[]>([]);
+
+  const [form, setForm] = useState<FacturaCreate>({
     tipo: "",
     data: "",
     codigo: "",
     nome: "",
-    nuit: "",
+    nuit:0,
+    valor:0,
     entidade: "",
     descricao: "",
-    produtos: [],
+    produtos:[],
   });
+
 
   const [formStep, setFormStep] = useState(0);
   const [isFormVisible, setIsFormVisible] = useState(false);
 
+  
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setForm({ ...formData, [name]: value });
+    setForm({ ...form, [name]: value });
   };
 
-  const handleProductChange = (index, field, value) => {
-    const updatedProdutos = [...formData.produtos];
+  const handleProductChange = (index:number, field:string, value:number) => {
+    const updatedProdutos: Produto[] = [...form.produtos];
+
     updatedProdutos[index][field] = value;
 
     if (field === "quantidade" || field === "valor") {
+
       const quantidade = parseFloat(updatedProdutos[index].quantidade || 0);
+
       const valor = parseFloat(updatedProdutos[index].valor || 0);
+
       updatedProdutos[index].total = quantidade * valor;
     }
 
-    setForm({ ...formData, produtos: updatedProdutos });
+    setForm({ ...form, produtos: updatedProdutos });
   };
 
   const addProduct = () => {
     setForm({
-      ...formData,
+      ...form,
       produtos: [
-        ...formData.produtos,
+        ...form.produtos,
         { nome: "", quantidade: 0, valor: 0, total: 0 },
       ],
     });
   };
 
   const removeProduct = (index) => {
-    const updatedProdutos = formData.produtos.filter((_, i) => i !== index);
-    setForm({ ...formData, produtos: updatedProdutos });
+    const updatedProdutos = form.produtos.filter((_, i) => i !== index);
+    setForm({ ...form, produtos: updatedProdutos });
   };
 
   const calculateTotal = () => {
-    return formData.produtos
+    return form.produtos
       .reduce((sum, produto) => sum + produto.total, 0)
       .toFixed(2);
   };
@@ -68,20 +81,69 @@ export const FacturaForm = () => {
     setIsFormVisible(true);
   };
 
-  const handleSubmit = () => {
-    console.log("Form Submitted", formData);
-    setForm({
-      tipo: "",
-      data: "",
-      codigo: "",
-      nome: "",
-      nuit: "",
-      entidade: "",
-      descricao: "",
-      produtos: [],
-    });
-    setIsFormVisible(false);
+  const handleSubmit = async (e: React.FormEvent) => {
+    
+    e.preventDefault();
+
+    const formData = {
+      codigo: form.codigo,
+      nome: form.nome,
+      tipo: form.tipo,
+      data: form.data,
+      entidade: form.entidade,
+      valor: form.valor,  // Certifique-se de que o valor é número
+      descricao: form.descricao,
+      nuit: parseInt(form.nuit.toString(), 10),  // Certifique-se de que nuit é um número
+      produtos: form.produtos.map((produto) => ({
+        ...produto,
+        quantidade: parseInt(produto.quantidade.toString(), 10),  // Convertendo quantidade para número
+        valor: parseFloat(produto.valor.toString()),  // Convertendo valor para número
+        total: parseFloat(produto.total.toString())  // Convertendo total para número
+      })),
+    };
+
+    try {
+      const response = await fetch("/api/facturas", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        // Tratar erro, caso a resposta não seja ok
+
+        const errorResponse = await response.json();
+      
+      // Exibir o erro no console para debugging
+      console.log("Erro ao enviar a fatura:", errorResponse);
+
+        return;
+      }
+
+      const newFactura = await response.json();
+      setFacturas([...facturas, newFactura]); // Adiciona a nova fatura ao estado
+
+      console.log("Form Submitted", formData);
+      // Reseta o formulário após a submissão
+      setForm({
+        tipo: "",
+        data: "",
+        codigo: "",
+        nome: "",
+        nuit: 0,
+        valor:"",
+        entidade: "",
+        descricao: "",
+        produtos: [],
+      });
+      setIsFormVisible(false); // Esconde o formulário após submissão
+    } catch (error) {
+      console.log("Erro ao enviar os dados", error);
+    }
   };
+
 
   const handleCancel = () => {
     setForm({
@@ -89,7 +151,8 @@ export const FacturaForm = () => {
       data: "",
       codigo: "",
       nome: "",
-      nuit: "",
+      nuit: 0,
+      valor:"",
       entidade: "",
       descricao: "",
       produtos: [],
@@ -156,7 +219,7 @@ export const FacturaForm = () => {
                   <label className="block">Tipo:</label>
                   <select
                     name="tipo"
-                    value={formData.tipo}
+                    value={form.tipo}
                     onChange={handleInputChange}
                     className="w-full min-w-[200px] mt-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 appearance-none"
                   >
@@ -173,7 +236,7 @@ export const FacturaForm = () => {
                   <input
                     type="date"
                     name="data"
-                    value={formData.data}
+                    value={form.data}
                     onChange={handleInputChange}
                     className="w-full mt-1 p-2 border border-gray-300  rounded-md bg-white  text-gray-900 dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
                     placeholder="Selecione a data"
@@ -186,7 +249,7 @@ export const FacturaForm = () => {
                 <input
                   type="text"
                   name="codigo"
-                  value={formData.codigo}
+                  value={form.codigo}
                   onChange={handleInputChange}
                   className="w-full mt-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200"
                   placeholder="Insira o código da factura"
@@ -198,7 +261,7 @@ export const FacturaForm = () => {
                 <input
                   type="text"
                   name="nome"
-                  value={formData.nome}
+                  value={form.nome}
                   onChange={handleInputChange}
                   className="w-full mt-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200"
                   placeholder="Insira o nome da factura"
@@ -237,9 +300,9 @@ export const FacturaForm = () => {
               <div>
                 <label className="block ">NUIT:</label>
                 <input
-                  type="text"
+                  type="number"
                   name="nuit"
-                  value={formData.nuit}
+                  value={form.nuit}
                   onChange={handleInputChange}
                   className="w-full mt-1 p-2 border border-gray-300 rounded-md dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
                   placeholder="Insira o NUIT"
@@ -251,7 +314,7 @@ export const FacturaForm = () => {
                 <input
                   type="text"
                   name="entidade"
-                  value={formData.entidade}
+                  value={form.entidade}
                   onChange={handleInputChange}
                   className="w-full mt-1 p-2 border border-gray-300 rounded-md dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
                   placeholder="Insira a entidade"
@@ -262,7 +325,7 @@ export const FacturaForm = () => {
                 <label className="block ">Descrição da Factura:</label>
                 <textarea
                   name="descricao"
-                  value={formData.descricao}
+                  value={form.descricao}
                   onChange={handleInputChange}
                   className="w-full mt-1 p-2 border border-gray-300 rounded-md dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
                   rows="3"
@@ -292,7 +355,7 @@ export const FacturaForm = () => {
           {formStep === 2 && (
             <div>
               <h3 className="text-lg font-semibold mb-4 ">Produtos</h3>
-              {formData.produtos.map((produto, index) => (
+              {form.produtos.map((produto, index) => (
                 <div
                   key={index}
                   className="flex flex-col md:flex-row items-center gap-4 mb-4 p-4 dark:bg-gray-800 bg-gray-50 rounded-md"
@@ -332,7 +395,7 @@ export const FacturaForm = () => {
                       Valor
                     </label>
                     <input
-                      type="number"
+                      type="text"
                       placeholder="Valor Unitário"
                       value={produto.valor}
                       onChange={(e) =>
@@ -391,31 +454,31 @@ export const FacturaForm = () => {
               <h2 className="text-2xl font-bold">Resumo da Factura</h2>
               <div>
                 <p>
-                  <strong>Tipo:</strong> {formData.tipo}
+                  <strong>Tipo:</strong> {form.tipo}
                 </p>
                 <p>
-                  <strong>Data:</strong> {formData.data}
+                  <strong>Data:</strong> {form.data}
                 </p>
                 <p>
-                  <strong>Código:</strong> {formData.codigo}
+                  <strong>Código:</strong> {form.codigo}
                 </p>
                 <p>
-                  <strong>Nome:</strong> {formData.nome}
+                  <strong>Nome:</strong> {form.nome}
                 </p>
                 <p>
-                  <strong>NUIT:</strong> {formData.nuit}
+                  <strong>NUIT:</strong> {form.nuit}
                 </p>
                 <p>
-                  <strong>Entidade:</strong> {formData.entidade}
+                  <strong>Entidade:</strong> {form.entidade}
                 </p>
                 <p>
-                  <strong>Descrição:</strong> {formData.descricao}
+                  <strong>Descrição:</strong> {form.descricao}
                 </p>
               </div>
 
               <div className="mt-4">
                 <h3 className="text-lg font-semibold">Produtos:</h3>
-                {formData.produtos.map((produto, index) => (
+                {form.produtos.map((produto, index) => (
                   <div
                     key={index}
                     className="flex justify-between items-center py-2"

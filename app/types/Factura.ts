@@ -7,6 +7,7 @@ export interface FacturaCreate {
     valor: string;
     descricao: string;
     nuit: number ;
+    produtos: Produto[]
   }
 
   export interface Factura extends FacturaCreate {
