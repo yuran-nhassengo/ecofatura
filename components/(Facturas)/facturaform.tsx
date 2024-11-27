@@ -101,14 +101,14 @@ export const FacturaForm = () => {
       tipo: form.tipo,
       data: form.data,
       entidade: form.entidade,
-      valor: form.valor,  // Certifique-se de que o valor é número
+      valor: form.valor,  
       descricao: form.descricao,
-      nuit: parseInt(form.nuit.toString(), 10),  // Certifique-se de que nuit é um número
+      nuit: parseInt(form.nuit.toString(), 10),  
       produtos: form.produtos.map((produto) => ({
         ...produto,
-        quantidade: parseInt(produto.quantidade.toString(), 10),  // Convertendo quantidade para número
-        valor: parseFloat(produto.valor.toString()),  // Convertendo valor para número
-        total: parseFloat(produto.total.toString())  // Convertendo total para número
+        quantidade: parseInt(produto.quantidade.toString(), 10), 
+        valor: parseFloat(produto.valor.toString()),
+        total: parseFloat(produto.total.toString())  
       })),
     };
 
@@ -122,21 +122,18 @@ export const FacturaForm = () => {
       });
 
       if (!response.ok) {
-        // Tratar erro, caso a resposta não seja ok
 
         const errorResponse = await response.json();
       
-      // Exibir o erro no console para debugging
       console.log("Erro ao enviar a fatura:", errorResponse);
 
         return;
       }
 
       const newFactura = await response.json();
-      setFacturas([...facturas, newFactura]); // Adiciona a nova fatura ao estado
+      setFacturas([...facturas, newFactura]);
 
       console.log("Form Submitted", formData);
-      // Reseta o formulário após a submissão
       setForm({
         tipo: "",
         data: "",
@@ -148,7 +145,7 @@ export const FacturaForm = () => {
         descricao: "",
         produtos: [],
       });
-      setIsFormVisible(false); // Esconde o formulário após submissão
+      setIsFormVisible(false); 
     } catch (error) {
       console.log("Erro ao enviar os dados", error);
     }
