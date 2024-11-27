@@ -4,7 +4,6 @@ import { HiTrash } from "react-icons/hi";
 import { Produto } from "../../app/types/Factura";
 
 export const FacturaForm = () => {
-
   const [facturas, setFacturas] = useState<Factura[]>([]);
 
   const [form, setForm] = useState<FacturaCreate>({
@@ -12,39 +11,33 @@ export const FacturaForm = () => {
     data: "",
     codigo: "",
     nome: "",
-    nuit:0,
-    valor:0,
+    nuit: 0,
+    valor: 0,
     entidade: "",
     descricao: "",
-    produtos:[],
+    produtos: [],
   });
-
 
   const [formStep, setFormStep] = useState(0);
   const [isFormVisible, setIsFormVisible] = useState<boolean>(false);
 
-  
-
   const handleInputChange = (e: React.ChangeEvent<HTMLElement>) => {
-    const { name, value } = e.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+    const { name, value } = e.target as
+      | HTMLInputElement
+      | HTMLTextAreaElement
+      | HTMLSelectElement;
 
     setForm({ ...form, [name]: value });
   };
 
-  const handleProductChange = (index:number, field:string, value:string) => {
+  const handleProductChange = (index: number, field: string, value: string) => {
     const updatedProdutos: Produto[] = [...form.produtos];
 
-     
-
-    if ( field === "nome") {
-
+    if (field === "nome") {
       updatedProdutos[index][field] = value;
-
     }
 
-
     if (field === "quantidade" || field === "valor") {
-
       updatedProdutos[index][field] = parseFloat(value) || 0;
 
       const quantidade = updatedProdutos[index].quantidade || 0;
@@ -67,7 +60,7 @@ export const FacturaForm = () => {
     });
   };
 
-  const removeProduct = (index:number) => {
+  const removeProduct = (index: number) => {
     const updatedProdutos = form.produtos.filter((_, i) => i !== index);
     setForm({ ...form, produtos: updatedProdutos });
   };
@@ -92,7 +85,6 @@ export const FacturaForm = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    
     e.preventDefault();
 
     const formData = {
@@ -101,14 +93,14 @@ export const FacturaForm = () => {
       tipo: form.tipo,
       data: form.data,
       entidade: form.entidade,
-      valor: form.valor,  
+      valor: form.valor,
       descricao: form.descricao,
-      nuit: parseInt(form.nuit.toString(), 10),  
+      nuit: parseInt(form.nuit.toString(), 10),
       produtos: form.produtos.map((produto) => ({
         ...produto,
-        quantidade: parseInt(produto.quantidade.toString(), 10), 
+        quantidade: parseInt(produto.quantidade.toString(), 10),
         valor: parseFloat(produto.valor.toString()),
-        total: parseFloat(produto.total.toString())  
+        total: parseFloat(produto.total.toString()),
       })),
     };
 
@@ -122,10 +114,9 @@ export const FacturaForm = () => {
       });
 
       if (!response.ok) {
-
         const errorResponse = await response.json();
-      
-      console.log("Erro ao enviar a fatura:", errorResponse);
+
+        console.log("Erro ao enviar a fatura:", errorResponse);
 
         return;
       }
@@ -140,17 +131,16 @@ export const FacturaForm = () => {
         codigo: "",
         nome: "",
         nuit: 0,
-        valor:0,
+        valor: 0,
         entidade: "",
         descricao: "",
         produtos: [],
       });
-      setIsFormVisible(false); 
+      setIsFormVisible(false);
     } catch (error) {
       console.log("Erro ao enviar os dados", error);
     }
   };
-
 
   const handleCancel = () => {
     setForm({
@@ -159,7 +149,7 @@ export const FacturaForm = () => {
       codigo: "",
       nome: "",
       nuit: 0,
-      valor:0,
+      valor: 0,
       entidade: "",
       descricao: "",
       produtos: [],
@@ -186,7 +176,7 @@ export const FacturaForm = () => {
               className={`w-full sm:w-1/4 text-center cursor-pointer ${
                 formStep === index ? "font-bold text-blue-500" : "text-gray-500"
               }`}
-              onClick={() => setFormStep(index)} 
+              onClick={() => setFormStep(index)}
             >
               {step}
             </div>
@@ -365,7 +355,7 @@ export const FacturaForm = () => {
               {form.produtos.map((produto, index) => (
                 <div
                   key={index}
-                  className="flex flex-col md:flex-row items-center gap-4 mb-4 p-4 dark:bg-gray-800 bg-gray-50 rounded-md"
+                  className="flex flex-col md:flex-row items-center gap-4 mb-4 p-4 bg-transparent border-2  rounded-md"
                 >
                   <div className="w-full md:w-2/5">
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">

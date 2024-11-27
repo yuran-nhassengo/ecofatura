@@ -51,8 +51,6 @@ export const Facturas: React.FC = () => {
     gerarPdf({ itens, logoUrl, empresaInfo }, factura);
   };
 
- 
-
   const [sortConfig, setSortConfig] = useState<{
     key: string;
     direction: "ascending" | "descending";
@@ -83,8 +81,6 @@ export const Facturas: React.FC = () => {
     fetchFacturas();
   }, []);
 
-
-
   const requestSort = (key: string) => {
     let direction: "ascending" | "descending" = "ascending";
     if (sortConfig.key === key && sortConfig.direction === "ascending") {
@@ -98,6 +94,7 @@ export const Facturas: React.FC = () => {
       ? [...facturas].sort((a: Factura, b: Factura) => {
           if (sortConfig.key) {
             const key = sortConfig.key as keyof Factura;
+
             if (key === "valor") {
               const aValue = parseFloat(a[key] as string);
               const bValue = parseFloat(b[key] as string);
@@ -111,17 +108,17 @@ export const Facturas: React.FC = () => {
                 ? aDate - bDate
                 : bDate - aDate;
             } else {
-              const aString = a[key] as string;
-              const bString = b[key] as string;
+              const aString = String(a[key]);
+              const bString = String(b[key]);
               return sortConfig.direction === "ascending"
                 ? aString.localeCompare(bString)
                 : bString.localeCompare(aString);
             }
           }
-          return 0; 
+          return 0;
         })
       : [];
-  }, [facturas, sortConfig]); 
+  }, [facturas, sortConfig]);
 
   const handleEdit = (index: number) => {
     setForm(facturas[index]);

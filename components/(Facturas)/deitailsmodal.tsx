@@ -1,5 +1,3 @@
-// src/components/FacturaDetailModal.tsx
-
 import React from "react";
 
 interface Factura {
@@ -19,14 +17,18 @@ interface FacturaDetailModalProps {
   IVA_FIXED: number;
 }
 
-export const FacturaDetailModal: React.FC<FacturaDetailModalProps> = ({ factura, onClose, IVA_FIXED }) => {
+export const FacturaDetailModal: React.FC<FacturaDetailModalProps> = ({
+  factura,
+  onClose,
+  IVA_FIXED,
+}) => {
   const calculateTotalWithIVA = (valor: string) => {
     return (parseFloat(valor) * (1 + IVA_FIXED / 100)).toFixed(2);
   };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-75">
-      <div className="md:w-96 p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg">
+      <div className="md:w-96 p-6 bg-gray-100 dark:bg-gray-900 rounded-lg shadow-lg">
         <h2 className="text-2xl font-semibold mb-4">
           Detalhes da {factura.tipo}
         </h2>
@@ -70,4 +72,3 @@ export const FacturaDetailModal: React.FC<FacturaDetailModalProps> = ({ factura,
     </div>
   );
 };
-
