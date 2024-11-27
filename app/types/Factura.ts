@@ -4,7 +4,7 @@ export interface FacturaCreate {
     tipo: string;
     data: string;
     entidade: string;
-    valor: string;
+    valor: number;
     descricao: string;
     nuit: number ;
     produtos: Produto[]
@@ -27,7 +27,9 @@ export interface FacturaCreate {
 
   export interface Produto {
     nome: string;
-    quantidade: number;
-    valor: number;
+    quantidade:  number ;
+    valor: number ;
     total: number;
 }
+
+

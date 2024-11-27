@@ -21,25 +21,35 @@ export const FacturaForm = () => {
 
 
   const [formStep, setFormStep] = useState(0);
-  const [isFormVisible, setIsFormVisible] = useState(false);
+  const [isFormVisible, setIsFormVisible] = useState<boolean>(false);
 
   
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
+  const handleInputChange = (e: React.ChangeEvent<HTMLElement>) => {
+    const { name, value } = e.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+
     setForm({ ...form, [name]: value });
   };
 
-  const handleProductChange = (index:number, field:string, value:number) => {
+  const handleProductChange = (index:number, field:string, value:string) => {
     const updatedProdutos: Produto[] = [...form.produtos];
 
-    updatedProdutos[index][field] = value;
+     
+
+    if ( field === "nome") {
+
+      updatedProdutos[index][field] = value;
+
+    }
+
 
     if (field === "quantidade" || field === "valor") {
 
-      const quantidade = parseFloat(updatedProdutos[index].quantidade || 0);
+      updatedProdutos[index][field] = parseFloat(value) || 0;
 
-      const valor = parseFloat(updatedProdutos[index].valor || 0);
+      const quantidade = updatedProdutos[index].quantidade || 0;
+
+      const valor = updatedProdutos[index].valor || 0;
 
       updatedProdutos[index].total = quantidade * valor;
     }
@@ -52,12 +62,12 @@ export const FacturaForm = () => {
       ...form,
       produtos: [
         ...form.produtos,
-        { nome: "", quantidade: 0, valor: 0, total: 0 },
+        { nome: " ", quantidade: 0, valor: 0, total: 0 },
       ],
     });
   };
 
-  const removeProduct = (index) => {
+  const removeProduct = (index:number) => {
     const updatedProdutos = form.produtos.filter((_, i) => i !== index);
     setForm({ ...form, produtos: updatedProdutos });
   };
@@ -133,7 +143,7 @@ export const FacturaForm = () => {
         codigo: "",
         nome: "",
         nuit: 0,
-        valor:"",
+        valor:0,
         entidade: "",
         descricao: "",
         produtos: [],
@@ -152,7 +162,7 @@ export const FacturaForm = () => {
       codigo: "",
       nome: "",
       nuit: 0,
-      valor:"",
+      valor:0,
       entidade: "",
       descricao: "",
       produtos: [],
@@ -328,7 +338,7 @@ export const FacturaForm = () => {
                   value={form.descricao}
                   onChange={handleInputChange}
                   className="w-full mt-1 p-2 border border-gray-300 rounded-md dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
-                  rows="3"
+                  rows={3}
                   placeholder="Insira a descrição da factura"
                 ></textarea>
               </div>
