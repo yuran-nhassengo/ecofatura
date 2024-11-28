@@ -40,6 +40,11 @@ export const Header = () => {
 
         <h1 className="flex justify-center font-extrabold ">Eco Facturas em Finalização</h1>
         <div className="flex items-center space-x-4">
+          <Link href={"/Cadastro"}>
+          <button className=" ">
+            Cadastrar-se
+          </button>
+          </Link>
         </div>
       </header>
 
