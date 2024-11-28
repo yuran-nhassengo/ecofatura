@@ -19,6 +19,8 @@ const useScreenSize = () => {
       setScreenWidth(window.innerWidth);
     };
 
+    
+
     updateScreenSize();
 
     window.addEventListener("resize", updateScreenSize);
@@ -123,14 +125,21 @@ export const Facturas: React.FC = () => {
       : [];
   }, [facturas, sortConfig]);
 
-  const handleEdit = (index: number) => {
-    setEditingFactura(facturas[index]);
-    setOpenEdit(!openEdit);
-    console.log("encontrei...",facturas[index]);
 
-    setSelectedFacturaIndex(index);
-    //document.getElementById("form-section")!.style.display = "block";
+  const handleEdit = (index: number) => {
+    const facturaSelecionada = facturas[index];
+    console.log("Fatura selecionada para editar:", facturaSelecionada);
+    
+    // Define a fatura a ser editada
+    setEditingFactura(facturaSelecionada);
+    
+    // Abre o formulário de edição
+    setOpenEdit(true);
+
+    console.log("llllll",openEdit);
   };
+
+ 
 
   const deleteSelected = () => {
     if (selectedIndices.length > 0) {
@@ -232,6 +241,18 @@ export const Facturas: React.FC = () => {
   const calculateTotalWithIVA = (valor: number) => {
     return (valor * (1 + IVA_FIXED / 100)).toFixed(2);
   };
+ 
+  const handleCloseEdit = () => {
+    // Fecha o formulário e reseta o estado de edição
+    setOpenEdit(false);
+    setEditingFactura(null);  // Reseta a fatura editada, se necessário
+  };
+
+  // const handleOpenCreate = () => {
+  //   setOpenEdit(true);  // Abre o formulário de criação
+  //   setEditingFactura(null);  // Não há fatura a ser editada
+  // };
+  
 
   return (
     <div className="max-w-2xl md:max-w-4xl lg:max-w-6xl 2xl:max-w-7xl mx-auto m-6 p-6 rounded-lg shadow-lg ">
@@ -239,11 +260,13 @@ export const Facturas: React.FC = () => {
         Gerenciamento de Faturas
       </h1>
       
-      {openEdit ? (
-        <FacturaForm  openForm={true} />
-      ) : (
-        <FacturaForm  />
-      )}
+      
+
+          {openEdit ? (
+            <FacturaForm openForm={true} defaultFactura={editingFactura} onClose={handleCloseEdit} />
+          ) : (
+            <FacturaForm openForm={false} defaultFactura={editingFactura} onClose={handleCloseEdit} />
+          )}
 
       {selectedIndices.length > 0 && (
         <button
