@@ -75,17 +75,47 @@ export const updateFactura = async (
         valor?: string;
         descricao?: string;
         nuit?: number;
+        produtos?: Produto[];
     }
 ) => {
 
     if (!isValidCUID(id)) {
         throw new Error('ID fornecido não é um CUID válido.');
     }
+
+    const updatedData: any = {
+        ...data,
+        updatedAt: new Date(),  // Define a data atual como a data de atualização
+      };
     
     const factura = await prisma.factura.update({
         where: { id },
-        data
+        data: updatedData,
     });
+
+    // if (data.produtos) {
+    //     // Atualizando produtos relacionados à fatura
+    //     for (const produto of data.produtos) {
+    //       // Atualizando cada produto individualmente
+    //       await prisma.produto.upsert({
+    //         where: { id: produto.id },  // Usando o ID do produto para atualizar ou criar
+    //         update: {
+    //           nome: produto.nome,
+    //           quantidade: produto.quantidade,
+    //           valor: produto.valor,
+    //           total: produto.total,
+    //         },
+    //         create: {
+    //           nome: produto.nome,
+    //           quantidade: produto.quantidade,
+    //           valor: produto.valor,
+    //           total: produto.total,
+    //           facturaId: id,  // Relacionando o produto à fatura
+    //         },
+    //       });
+    //     }
+    //   }
+
     return factura; 
 };
 
