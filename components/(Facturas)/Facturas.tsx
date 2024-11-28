@@ -42,6 +42,8 @@ export const Facturas: React.FC = () => {
 
   const [facturas, setFacturas] = useState<Factura[]>([]);
 
+  const [editingFactura, setEditingFactura] = useState<Factura | null>(null);
+
   const handleGerarPdf = (
     logoUrl: string,
     empresaInfo: string[],
@@ -121,9 +123,12 @@ export const Facturas: React.FC = () => {
   }, [facturas, sortConfig]);
 
   const handleEdit = (index: number) => {
-    setForm(facturas[index]);
+    setEditingFactura(facturas[index]);
+
+    console.log("encontrei...",facturas[index]);
+
     setSelectedFacturaIndex(index);
-    document.getElementById("form-section")!.style.display = "block";
+    //document.getElementById("form-section")!.style.display = "block";
   };
 
   const deleteSelected = () => {
@@ -223,8 +228,8 @@ export const Facturas: React.FC = () => {
     };
   }, []);
 
-  const calculateTotalWithIVA = (valor: string) => {
-    return (parseFloat(valor) * (1 + IVA_FIXED / 100)).toFixed(2);
+  const calculateTotalWithIVA = (valor: number) => {
+    return (valor * (1 + IVA_FIXED / 100)).toFixed(2);
   };
 
   return (
@@ -328,6 +333,8 @@ export const Facturas: React.FC = () => {
             {sortedFacturas.map((factura, index) => (
               <tr
                 key={index}
+                
+
                 className="hover:bg-gray-100 dark:hover:bg-gray-900 cursor-pointer"
                 onClick={() => {
                   if (isMobile) {
@@ -423,6 +430,7 @@ export const Facturas: React.FC = () => {
             ))}
           </tbody>
         </table>
+
       </div>
 
       {/* Renderiza DeleteModal */}
