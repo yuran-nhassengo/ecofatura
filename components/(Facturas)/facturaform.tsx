@@ -1,12 +1,13 @@
-import { Factura, FacturaCreate } from "@/app/types/Factura";
+import { Factura, FacturaCreate, FacturaFormProps } from "@/app/types/Factura";
 import React, { useState } from "react";
 import { HiTrash } from "react-icons/hi";
 import { Produto } from "../../app/types/Factura";
 
-export const FacturaForm = () => {
+export const FacturaForm: React.FC<FacturaFormProps> = ({ openForm = false, defaultFactura } ) => {
+
   const [facturas, setFacturas] = useState<Factura[]>([]);
 
-  const [form, setForm] = useState<FacturaCreate>({
+  const [form, setForm] = useState<FacturaCreate>(defaultFactura ||{
     tipo: "",
     data: "",
     codigo: "",
@@ -19,7 +20,7 @@ export const FacturaForm = () => {
   });
 
   const [formStep, setFormStep] = useState(0);
-  const [isFormVisible, setIsFormVisible] = useState<boolean>(false);
+  const [isFormVisible, setIsFormVisible] = useState<boolean>(openForm);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLElement>) => {
     const { name, value } = e.target as
@@ -81,7 +82,7 @@ export const FacturaForm = () => {
 
   const handleCreateNewFactura = () => {
     setFormStep(0);
-    setIsFormVisible(true);
+    setIsFormVisible(!isFormVisible);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -157,7 +158,7 @@ export const FacturaForm = () => {
     setFormStep(0);
   };
   const handleCloseForm = () => {
-    setIsFormVisible(false);
+    setIsFormVisible(!isFormVisible);
   };
 
   const renderProgress = () => {

@@ -18,7 +18,7 @@ export const createFactura = async (
     tipo: string,
     data: string,
     entidade: string,
-    valor: string,
+    valor: number,
     descricao:string,
     nuit: number,
     produtos: Produto[]
@@ -49,7 +49,11 @@ export const createFactura = async (
 };
 
 export const getAllFacturas = async () => {
-    const facturas = await prisma.factura.findMany();
+    const facturas = await prisma.factura.findMany({
+        include: {
+            produtos: true, // Incluindo os produtos associados a cada fatura
+        },
+    });
     return facturas; 
 };
 
