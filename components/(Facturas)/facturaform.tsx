@@ -1,9 +1,13 @@
 import { Factura, FacturaCreate, FacturaFormProps } from "@/app/types/Factura";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { HiTrash } from "react-icons/hi";
 import { Produto } from "../../app/types/Factura";
 
-export const FacturaForm: React.FC<FacturaFormProps> = ({ openForm = false, defaultFactura } ) => {
+//export const FacturaForm: React.FC<FacturaFormProps> = ({ openForm = false, defaultFactura } ) => {
+
+export  const FacturaForm: React.FC<{ openForm: boolean, onClose: () => void, defaultFactura: Factura | null }> = ({ openForm, onClose, defaultFactura }) => {
+
+ 
 
   const [facturas, setFacturas] = useState<Factura[]>([]);
 
@@ -22,6 +26,16 @@ export const FacturaForm: React.FC<FacturaFormProps> = ({ openForm = false, defa
   const [formStep, setFormStep] = useState(0);
   const [isFormVisible, setIsFormVisible] = useState<boolean>(openForm);
 
+  useEffect(() => {
+    if (defaultFactura) {
+      setForm(defaultFactura);  // Quando a fatura a ser editada é recebida, atualiza o estado do formulário
+    }
+  }, [defaultFactura]); // Atualiza o formulário sempre que a fatura mudar
+
+  useEffect(() => {
+    setIsFormVisible(openForm);
+  }, [openForm]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLElement>) => {
     const { name, value } = e.target as
       | HTMLInputElement
@@ -30,6 +44,8 @@ export const FacturaForm: React.FC<FacturaFormProps> = ({ openForm = false, defa
 
     setForm({ ...form, [name]: value });
   };
+
+  
 
   const handleProductChange = (index: number, field: string, value: string) => {
     const updatedProdutos: Produto[] = [...form.produtos];
@@ -82,7 +98,7 @@ export const FacturaForm: React.FC<FacturaFormProps> = ({ openForm = false, defa
 
   const handleCreateNewFactura = () => {
     setFormStep(0);
-    setIsFormVisible(!isFormVisible);
+    setIsFormVisible(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -157,9 +173,10 @@ export const FacturaForm: React.FC<FacturaFormProps> = ({ openForm = false, defa
     });
     setFormStep(0);
   };
-  const handleCloseForm = () => {
-    setIsFormVisible(!isFormVisible);
-  };
+  // const handleCloseForm = () => {
+  //   setIsFormVisible(false);
+  //   console.log("Sera que mudo....",openForm);
+  // };
 
   const renderProgress = () => {
     const steps = [
@@ -269,7 +286,10 @@ export const FacturaForm: React.FC<FacturaFormProps> = ({ openForm = false, defa
               <div className="flex justify-between mt-4">
                 <button
                   type="button"
-                  onClick={handleCloseForm}
+                  onClick={() => {
+                    onClose();  // Chama a função de fechamento do formulário passada como prop
+                    setIsFormVisible(false);  // Também garante que o formulário se torna invisível internamente
+                  }}
                   className="bg-red-500 dark:bg-red-700 text-white px-4 py-2 rounded-md hover:bg-red-600 dark:hover:bg-red-800"
                 >
                   Fechar
