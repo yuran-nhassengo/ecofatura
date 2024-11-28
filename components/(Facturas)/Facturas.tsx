@@ -43,6 +43,7 @@ export const Facturas: React.FC = () => {
   const [facturas, setFacturas] = useState<Factura[]>([]);
 
   const [editingFactura, setEditingFactura] = useState<Factura | null>(null);
+  const [openEdit,setOpenEdit] = useState<boolean>(false);
 
   const handleGerarPdf = (
     logoUrl: string,
@@ -124,7 +125,7 @@ export const Facturas: React.FC = () => {
 
   const handleEdit = (index: number) => {
     setEditingFactura(facturas[index]);
-
+    setOpenEdit(!openEdit);
     console.log("encontrei...",facturas[index]);
 
     setSelectedFacturaIndex(index);
@@ -237,7 +238,12 @@ export const Facturas: React.FC = () => {
       <h1 className="text-3xl font-semibold text-center mb-8">
         Gerenciamento de Faturas
       </h1>
-      <FacturaForm />
+      
+      {openEdit ? (
+        <FacturaForm  openForm={true} />
+      ) : (
+        <FacturaForm  />
+      )}
 
       {selectedIndices.length > 0 && (
         <button

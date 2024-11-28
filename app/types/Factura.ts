@@ -32,4 +32,9 @@ export interface FacturaCreate {
     total: number;
 }
 
+export interface FacturaFormProps {
+  openForm?: boolean; // Controla a visibilidade do formulário
+  defaultFactura?: FacturaCreate; // Dados iniciais para preencher o formulário
+}
+
 
