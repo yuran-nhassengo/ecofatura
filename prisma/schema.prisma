@@ -35,3 +35,15 @@ model Produto {
   facturaId   String    // Relacionamento com a fatura
   factura     Factura   @relation(fields: [facturaId], references: [id]) // Relacionamento com a fatura
 }
+
+
+model Usuario {
+
+  id              String @id @default(cuid())
+  nome            String
+  email           String
+  dataNascimento  String
+  senha           String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now())
+}
