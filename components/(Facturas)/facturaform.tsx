@@ -122,13 +122,28 @@ export  const FacturaForm: React.FC<{ openForm: boolean, onClose: () => void, de
     };
 
     try {
-      const response = await fetch("/api/facturas", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+
+      let response;
+
+      if (defaultFactura) {
+        // Se já existe uma fatura (modo de edição), realiza um PUT
+        response = await fetch(`/api/facturas/${defaultFactura.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+      } else {
+
+          response = await fetch("/api/facturas", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          });
+      }
 
       if (!response.ok) {
         const errorResponse = await response.json();
@@ -139,7 +154,14 @@ export  const FacturaForm: React.FC<{ openForm: boolean, onClose: () => void, de
       }
 
       const newFactura = await response.json();
-      setFacturas([...facturas, newFactura]);
+      
+      if (defaultFactura) {
+        // Atualiza a fatura no estado
+        setFacturas(facturas.map(factura => factura.codigo === newFactura.codigo ? newFactura : factura));
+      } else {
+        // Adiciona nova fatura ao estado
+        setFacturas([...facturas, newFactura]);
+      }
 
       console.log("Form Submitted", formData);
       setForm({
@@ -173,11 +195,7 @@ export  const FacturaForm: React.FC<{ openForm: boolean, onClose: () => void, de
     });
     setFormStep(0);
   };
-  // const handleCloseForm = () => {
-  //   setIsFormVisible(false);
-  //   console.log("Sera que mudo....",openForm);
-  // };
-
+ 
   const renderProgress = () => {
     const steps = [
       "Informações Gerais",
@@ -526,7 +544,7 @@ export  const FacturaForm: React.FC<{ openForm: boolean, onClose: () => void, de
                   onClick={handleSubmit}
                   className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
                 >
-                  Submeter
+                  {defaultFactura ? "Atualizar Fatura" : "Submeter"}
                 </button>
               </div>
             </div>

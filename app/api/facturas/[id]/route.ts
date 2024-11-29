@@ -8,8 +8,10 @@ export async function PUT(
 ) {
   const { id } = await params; // Aguarde a resolução dos parâmetros
   const body = await request.json();
+  console.log("os dados a atualizar",body);
   try {
     const updatedFactura = await updateFactura(id, body);
+    
     return NextResponse.json(updatedFactura);
   } catch (error) {
     return NextResponse.json(

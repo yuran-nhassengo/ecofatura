@@ -87,34 +87,36 @@ export const updateFactura = async (
         ...data,
         updatedAt: new Date(),  // Define a data atual como a data de atualização
       };
+
+      if (data.produtos && data.produtos.length > 0) {
+        updatedData.produtos = {
+          upsert: data.produtos.map((produto) => ({
+            where: { id: produto.id }, // Buscando pelo ID do produto
+            update: {
+              nome: produto.nome,
+              quantidade: produto.quantidade,
+              valor: produto.valor,
+              total: produto.total, // A lógica do total será mantida
+            },
+            create: {
+              nome: produto.nome,
+              quantidade: produto.quantidade,
+              valor: produto.valor,
+              total: produto.total,
+            },
+          })),
+        };
+      }
     
     const factura = await prisma.factura.update({
         where: { id },
         data: updatedData,
+        include: {
+            produtos: true, // Inclui os produtos associados na resposta
+          },
     });
 
-    // if (data.produtos) {
-    //     // Atualizando produtos relacionados à fatura
-    //     for (const produto of data.produtos) {
-    //       // Atualizando cada produto individualmente
-    //       await prisma.produto.upsert({
-    //         where: { id: produto.id },  // Usando o ID do produto para atualizar ou criar
-    //         update: {
-    //           nome: produto.nome,
-    //           quantidade: produto.quantidade,
-    //           valor: produto.valor,
-    //           total: produto.total,
-    //         },
-    //         create: {
-    //           nome: produto.nome,
-    //           quantidade: produto.quantidade,
-    //           valor: produto.valor,
-    //           total: produto.total,
-    //           facturaId: id,  // Relacionando o produto à fatura
-    //         },
-    //       });
-    //     }
-    //   }
+    
 
     return factura; 
 };
