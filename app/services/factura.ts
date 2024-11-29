@@ -122,6 +122,12 @@ export const updateFactura = async (
 };
 
 export const deleteFactura = async (id: string) => {
+
+    await prisma.produto.deleteMany({
+        where: { facturaId: id }
+      }); 
+
+      
     const factura = await prisma.factura.delete({
         where: { id }
     });
