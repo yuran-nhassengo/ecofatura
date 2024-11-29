@@ -38,10 +38,10 @@ export const Header = () => {
           />
         </div>
 
-        <h1 className="flex justify-center font-extrabold ">Eco Facturas em Finalização</h1>
+        <h1 className="flex text-xs sm:text-base justify-center font-extrabold ">Eco Facturas em Finalização</h1>
         <div className="flex items-center space-x-4">
           <Link href={"/Cadastro"}>
-          <button className=" ">
+          <button className="text-xs  sm:text-base hover:text-blue-500 transition-all duration-200 ease-in-out ">
             Cadastrar-se
           </button>
           </Link>
@@ -86,12 +86,24 @@ export const Header = () => {
                 </Link>
               </li>
             </ul>
+            <div className="flex justify-between w-52">
+
+           
+            <Link href="/Login" passHref>
+            
+            <button
+              className="mt-6 bg-blue-600 text-white px-4 py-2 rounded-xl text-lg hover:bg-blue-700 transition-all duration-200 ease-in-out"
+            >
+              Login
+            </button>
+            </Link>
             <button
               onClick={toggleSidebar}
               className="mt-6 bg-red-600 text-white px-4 py-2 rounded-xl text-lg hover:bg-red-700 transition-all duration-200 ease-in-out"
             >
               Fechar
             </button>
+              </div>
           </motion.div>
         </>
       )}

@@ -3,9 +3,8 @@
 import { Header } from '@/components/(Header)/header';
 import { useState } from 'react';
 
-const FormCadastro = () => {
+const FormLogin = () => {
   const steps = [
-    { label: 'Informações Pessoais', fields: ['Nome', 'Apelido'] },
     { label: 'Credenciais', fields: ['E-mail', 'Senha'] },
     { label: 'Resumo', fields: [] },
   ];
@@ -13,8 +12,6 @@ const FormCadastro = () => {
   const [currentStep, setCurrentStep] = useState(0);
 
   const [formData, setFormData] = useState({
-    nome: '',
-    apelido: '',
     email: '',
     senha: '',
   });
@@ -43,7 +40,7 @@ const FormCadastro = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Formulário enviado:', formData);
+    console.log('Formulário de login enviado:', formData);
   };
 
   const handleProgressClick = (stepIndex: number) => {
@@ -54,14 +51,14 @@ const FormCadastro = () => {
     <div>
       <Header />
       <div className="flex w-full min-h-screen">
-        {/* Imagem à esquerda */}
         <div className="hidden md:block w-1/2 bg-cover bg-center" style={{ backgroundImage: 'url(https://laisschulz.com/wp-content/uploads/2024/01/poses-para-fotos-femininas-image-24.jpg)' }}></div>
 
+        {/* Formulário à direita */}
         <div className="w-full md:w-1/2 p-8 flex flex-col justify-center">
-          <h2 className="text-2xl font-semibold text-center mb-6">Cadastro de Usuário</h2>
+          <h2 className="text-2xl font-semibold text-center mb-6">Login</h2>
 
           <div className="relative mb-6">
-            <div className=" w-full grid text-center items-center sm:flex  sm:justify-between justify-center px-4 mb-2">
+            <div className="w-full grid text-center items-center sm:flex sm:justify-between justify-center px-4 mb-2">
               {steps.map((step, index) => (
                 <span
                   key={index}
@@ -74,21 +71,18 @@ const FormCadastro = () => {
                 </span>
               ))}
             </div>
-            {/* Barra de Progresso */}
             <div className="h-2 bg-gray-200 rounded-full">
               <div
                 className="h-full bg-green-500 rounded-full"
                 style={{ width: `${progressPercentage}%` }}
               ></div>
             </div>
-
           </div>
 
           {/* Formulário */}
           <form onSubmit={handleSubmit} className="mt-4 md:mt-0">
             <h3 className="text-lg md:text-xl font-medium mb-4">{steps[currentStep].label}</h3>
 
-            {/* Campos da etapa atual */}
             {steps[currentStep].fields.length > 0 &&
               steps[currentStep].fields.map((field, index) => (
                 <div key={index} className="mb-4">
@@ -96,7 +90,7 @@ const FormCadastro = () => {
                     {field}
                   </label>
                   <input
-                    type="text"
+                    type={field === 'Senha' ? 'password' : 'email'}
                     id={field}
                     name={field.toLowerCase()} // nome do campo em minúsculo
                     value={formData[field.toLowerCase() as keyof typeof formData] || ''} // garantir que seja acessado corretamente
@@ -107,15 +101,15 @@ const FormCadastro = () => {
                 </div>
               ))}
 
-            {currentStep === 2 && (
+            {/* Exibindo o resumo na última etapa */}
+            {currentStep === 1 && (
               <div className="mb-6">
-                <h4 className="font-semibold text-lg mb-2">Resumo do Cadastro</h4>
-                <p><strong>Nome:</strong> {formData.nome}</p>
-                <p><strong>Apelido:</strong> {formData.apelido}</p>
+                <h4 className="font-semibold text-lg mb-2">Resumo do Login</h4>
                 <p><strong>E-mail:</strong> {formData.email}</p>
               </div>
             )}
 
+            {/* Botões de navegação */}
             <div className="flex justify-between mt-6">
               {currentStep > 0 && (
                 <button
@@ -139,7 +133,7 @@ const FormCadastro = () => {
                   type="submit"
                   className="px-6 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
                 >
-                  Cadastrar
+                  Entrar
                 </button>
               )}
             </div>
@@ -150,4 +144,4 @@ const FormCadastro = () => {
   );
 };
 
-export default FormCadastro;
+export default FormLogin;
