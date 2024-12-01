@@ -25,7 +25,7 @@ export interface FacturaCreate {
     empresaInfo: string[];
   }
 
-  export interface Produto {
+  export interface Produto  {
     id:string
     nome: string;
     quantidade:  number ;

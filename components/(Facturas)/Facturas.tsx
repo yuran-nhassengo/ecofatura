@@ -1,6 +1,7 @@
 "use client";
 
 import { Factura, FacturaCreate, ItemCotacao } from "@/app/types/Factura";
+import { Produto } from "@/app/types/Factura";
 import React, { useState, useRef, useEffect } from "react";
 import { FaTrash, FaInfoCircle } from "react-icons/fa";
 import { gerarPdf } from "../pdf/generatePdf";

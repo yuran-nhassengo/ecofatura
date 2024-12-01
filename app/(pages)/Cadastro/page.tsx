@@ -6,7 +6,7 @@ import { useState } from 'react';
 const FormCadastro = () => {
   const steps = [
     { label: 'Informações Pessoais', fields: ['Nome', 'Apelido'] },
-    { label: 'Credenciais', fields: ['E-mail', 'Senha'] },
+    { label: 'Credenciais', fields: ['E-mail', 'Senha' ] },
     { label: 'Resumo', fields: [] },
   ];
 
