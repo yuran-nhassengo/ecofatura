@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 
-
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -77,3 +77,25 @@ export const deleteUsuario = async (id: string) =>{
 
     return usuario;
 }
+
+export const loginUser = async (email: string, senha: string) => {
+    // Buscar o usuário pelo e-mail
+    const usuario = await prisma.usuario.findUnique({
+      where: { email },
+    });
+  
+    // Verificar se o usuário existe
+    if (!usuario) {
+      throw new Error("Usuário não encontrado");
+    }
+  
+    // Comparar a senha fornecida com a senha armazenada (criptografada)
+    const senhaValida = await bcrypt.compare(senha, usuario.senha);
+  
+    if (!senhaValida) {
+      throw new Error("Senha inválida");
+    }
+  
+    // Retornar o usuário se a senha for válida
+    return usuario;
+  };

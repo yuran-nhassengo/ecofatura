@@ -5,6 +5,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
+import axios from 'axios';
 
 const loginSchema = z.object({
   email: z.string().email('E-mail inválido.').nonempty('E-mail é obrigatório.'),
@@ -31,9 +32,26 @@ const FormLogin = () => {
     },
   });
 
-  const onSubmit = (data: LoginFormData) => {
+  const onSubmit = async (data: LoginFormData) => {
     console.log('Login efetuado com:', data);
-    setCurrentStep(totalSteps - 1); // Simula o preenchimento da barra de progresso ao concluir
+
+    try {
+      // Usando o axios para enviar os dados para a API de login
+      const response = await axios.post('/api/login', data);
+
+      if (response.status === 200) {
+        // Se o login for bem-sucedido, simula a atualização da barra de progresso
+        setCurrentStep(totalSteps - 1); 
+        console.log('Usuário autenticado:', response.data);
+        // Pode redirecionar para o painel ou para outra página
+        // window.location.href = '/dashboard'; // Exemplo de redirecionamento
+      } else {
+        console.log('Credenciais inválidas');
+      }
+    } catch (error) {
+      // Se a requisição falhar
+      console.log('Erro ao conectar ao servidor. Tente novamente.');
+    }
   };
 
   return (
