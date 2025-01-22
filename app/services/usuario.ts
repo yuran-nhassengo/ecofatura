@@ -15,6 +15,7 @@ export const createUser = async (
 
 ) => {
 
+    
     const usuario = await prisma.usuario.create({
         data:{
             nome,
@@ -24,7 +25,7 @@ export const createUser = async (
             senha,
         },
     });
-
+    console.log("O service.....",usuario)
     return usuario;
 
 }

@@ -68,7 +68,7 @@ const FormCadastro = () => {
 
     try {
       // Enviar dados para o servidor usando axios
-      const response = await axios.post('/api/cadastrar-usuario', data);
+      const response = await axios.post('/api/usuarios', data);
 
       // Verifica se a resposta foi bem-sucedida
       if (response.status === 201) {
@@ -78,10 +78,12 @@ const FormCadastro = () => {
         // window.location.href = '/login';
       } else {
         setErrorMessage('Erro ao cadastrar usuário');
+        
       }
     } catch (error: any) {
       // Se houver erro, captura e exibe a mensagem de erro
       setErrorMessage(error.response?.data?.message || 'Erro inesperado');
+      console.log("erro ao cadastara......",error);
     } finally {
       setLoading(false); // Finaliza o carregamento
     }

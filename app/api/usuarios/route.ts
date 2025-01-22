@@ -15,6 +15,8 @@ export async function GET() {
 export async function POST(request: Request) {
     const body = await request.json();
 
+    console.log("Chegada api..",body);
+
     try {
 
         const {nome,apelido,email,dataNascimento,senha} = body;
