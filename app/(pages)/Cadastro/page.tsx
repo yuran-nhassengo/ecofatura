@@ -6,11 +6,13 @@ import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
+import bcrypt from 'bcryptjs';
 
 const formSchema = z.object({
   nome: z.string().nonempty('Nome é obrigatório.'),
   apelido: z.string().nonempty('Apelido é obrigatório.'),
   email: z.string().email('E-mail inválido.').nonempty('E-mail é obrigatório.'),
+  dataNascimento: z.string().nonempty('Data de nascimento é obrigatória.'),
   senha: z.string().min(6, 'Senha deve ter pelo menos 6 caracteres.'),
   confirmarSenha: z.string().min(6, 'Confirmação de senha deve ter pelo menos 6 caracteres.'),
 }).refine((data) => data.senha === data.confirmarSenha, {
@@ -22,7 +24,7 @@ type FormData = z.infer<typeof formSchema>;
 
 const FormCadastro = () => {
   const steps = [
-    { label: 'Informações Pessoais', fields: ['nome', 'apelido'] },
+    { label: 'Informações Pessoais', fields: ['nome', 'apelido','dataNascimento'] },
     { label: 'Credenciais', fields: ['email', 'senha', 'confirmarSenha'] },
     { label: 'Resumo', fields: [] },
   ];
@@ -42,6 +44,7 @@ const FormCadastro = () => {
       nome: '',
       apelido: '',
       email: '',
+      dataNascimento:'',
       senha: '',
       confirmarSenha: '',
     },
@@ -67,9 +70,18 @@ const FormCadastro = () => {
     setErrorMessage(''); // Limpa mensagens de erro
 
     try {
-      // Enviar dados para o servidor usando axios
-      const response = await axios.post('/api/usuarios', data);
 
+      const hashedPassword = await bcrypt.hash(data.senha, 10); // '10' é o 
+   
+      const response = await axios.post('/api/usuarios', {
+        nome: data.nome,
+        apelido: data.apelido,
+        email: data.email,
+        senha: hashedPassword, // Envia a senha criptografada
+        dataNascimento: data.dataNascimento,
+      });
+
+        
       // Verifica se a resposta foi bem-sucedida
       if (response.status === 201) {
         // Caso o cadastro seja bem-sucedido, redirecionar ou mostrar mensagem
@@ -78,12 +90,10 @@ const FormCadastro = () => {
         // window.location.href = '/login';
       } else {
         setErrorMessage('Erro ao cadastrar usuário');
-        
       }
     } catch (error: any) {
       // Se houver erro, captura e exibe a mensagem de erro
       setErrorMessage(error.response?.data?.message || 'Erro inesperado');
-      console.log("erro ao cadastara......",error);
     } finally {
       setLoading(false); // Finaliza o carregamento
     }
