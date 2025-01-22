@@ -1,6 +1,5 @@
-// prisma/seed/seed.ts
-import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcryptjs'
+const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcryptjs');
 
 const prisma = new PrismaClient();
 
@@ -14,7 +13,7 @@ async function main() {
       nome: 'João Silva',
       apelido: 'João',
       dataNascimento:'02/02/1900',
-      email: 'binario@example.com',
+      email: 'binario@gmail.com',
       senha: passwordHash, // A senha deve ser encriptada antes de inserir em produção
     },
   });
