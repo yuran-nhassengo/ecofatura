@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import axios from 'axios';
 
 const formSchema = z.object({
   nome: z.string().nonempty('Nome é obrigatório.'),
@@ -27,6 +28,8 @@ const FormCadastro = () => {
   ];
 
   const [currentStep, setCurrentStep] = useState(0);
+  const [loading, setLoading] = useState(false); 
+  const [errorMessage, setErrorMessage] = useState('');
 
   const {
     control,
@@ -59,8 +62,29 @@ const FormCadastro = () => {
 
   const progressPercentage = ((currentStep + 1) / steps.length) * 100;
 
-  const onSubmit = (data: FormData) => {
-    console.log('Formulário enviado:', data);
+  const onSubmit = async (data: FormData) => {
+    setLoading(true); // Começa o carregamento
+    setErrorMessage(''); // Limpa mensagens de erro
+
+    try {
+      // Enviar dados para o servidor usando axios
+      const response = await axios.post('/api/cadastrar-usuario', data);
+
+      // Verifica se a resposta foi bem-sucedida
+      if (response.status === 201) {
+        // Caso o cadastro seja bem-sucedido, redirecionar ou mostrar mensagem
+        alert('Cadastro realizado com sucesso!');
+        // Você pode redirecionar o usuário para a página de login ou outro local:
+        // window.location.href = '/login';
+      } else {
+        setErrorMessage('Erro ao cadastrar usuário');
+      }
+    } catch (error: any) {
+      // Se houver erro, captura e exibe a mensagem de erro
+      setErrorMessage(error.response?.data?.message || 'Erro inesperado');
+    } finally {
+      setLoading(false); // Finaliza o carregamento
+    }
   };
 
   const handleProgressClick = (stepIndex: number) => {

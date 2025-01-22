@@ -41,6 +41,7 @@ model Usuario {
 
   id              String @id @default(cuid())
   nome            String
+  apelido         String?
   email           String
   dataNascimento  String
   senha           String

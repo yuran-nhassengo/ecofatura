@@ -17,8 +17,8 @@ export async function POST(request: Request) {
 
     try {
 
-        const {nome,email,dataNascimento,senha} = body;
-        const newUser = await createUser(nome,email,dataNascimento,senha);
+        const {nome,apelido,email,dataNascimento,senha} = body;
+        const newUser = await createUser(nome,apelido,email,dataNascimento,senha);
 
         return NextResponse.json(newUser, {status: 201});
     }catch (error){
